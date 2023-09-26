@@ -74,8 +74,7 @@ group :test do
   gem "webdrivers"
 end
 
-gem 'saral-locatable', git: "https://github.com/jarvisconsulting/saral-locatable.git", branch: 'new_f_r7_branch'
-gem 'sso_client', git: 'https://github.com/jarvisconsulting/sso_client.git', branch: "master-add-views-vt"
+gem 'dotenv-rails', groups: [:development, :test, :production]
 gem 'listen'
 gem 'sidekiq'
 gem 'sidekiq-cron'
