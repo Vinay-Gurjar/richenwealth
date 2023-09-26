@@ -1,2 +1,0 @@
-class SsoClientKey < ApplicationRecord
-end

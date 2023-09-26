@@ -1,2 +1,0 @@
-class ClientApp < ApplicationRecord
-end
