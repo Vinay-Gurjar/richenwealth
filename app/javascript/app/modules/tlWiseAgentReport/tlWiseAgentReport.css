@@ -1,0 +1,51 @@
+:root {
+    --party-color:  #FF9559;
+}
+
+.tl-wise-agent-report-container {
+    margin-top: 1rem;
+}
+
+.tl-report-header {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+    height: 5rem;
+    background: #ff9900;
+}
+
+.tl-table-sub-header {
+    white-space: nowrap;
+    background: #073763 !important;
+    color: white !important;
+    border-left: 1px solid white;
+
+}
+
+.tl-table-sub-header::after {
+    content: "\A"; /* Use "\A" to insert a line break */
+    white-space: pre; /* Preserve whitespace and line breaks */
+
+}
+
+
+
+.tl-table-sub-headers {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+
+.tl-sub-headers {
+/*border-left: 1px solid black;*/
+}
+
+.team-leaders-dropdown {
+    z-index: 0;
+    width: 10rem;
+    border: none;
+}
+fieldset {
+    border: none !important;
+}
