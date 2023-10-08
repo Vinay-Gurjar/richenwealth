@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import './app.scss';
 import {Navigate} from "react-router";
-import HomeComponent from "./modules/home/home.component";
+import HomeComponent from "./modules/home/homeComponent";
 
 function App() {
 

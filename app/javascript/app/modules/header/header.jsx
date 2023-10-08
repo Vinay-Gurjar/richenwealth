@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { Toolbar, Select, MenuItem, Icon } from '@material-ui/core';
 import './header.css'; // Import your CSS file
-
 import MenuIcon from '../../../../../public/assets/image/menuIcon.svg'
 import SaralIcon from '../../../../../public/assets/image/saralLogo.svg'
 import {FormControl, InputLabel} from "@mui/material";

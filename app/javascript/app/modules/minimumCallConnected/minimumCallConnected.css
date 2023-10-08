@@ -1,0 +1,10 @@
+.agent-min-call-header {
+    background: #ff0000 !important;
+    color: white !important;
+    border: 1px dotted black;
+}
+
+.agent-min-call-value {
+    border: 1px dotted black;
+    text-align: center;
+}
