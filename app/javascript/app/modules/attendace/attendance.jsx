@@ -241,6 +241,7 @@ const Attendance = ({}) => {
                 </tr>
                 </thead>
                 <tbody>
+
                     {agentDetails && agentDetails.map((agents, index) => (
                         <tr key={index}>
 
