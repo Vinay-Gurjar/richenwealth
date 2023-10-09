@@ -1,0 +1,5 @@
+class CallCenterShiftTime < ApplicationRecord
+
+  
+
+end
