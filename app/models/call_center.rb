@@ -1,0 +1,5 @@
+class CallCenter < ApplicationRecord
+
+  
+
+end
