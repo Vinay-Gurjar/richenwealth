@@ -15,7 +15,7 @@ class Api::UsersController < ApplicationController
           if file_type == 'apr'
 
           else
-            not_created_user << create_agents(row) if not_created_user
+            not_created_user << create_agents(row, file_type) if not_created_user
           end
 
 
@@ -45,13 +45,12 @@ class Api::UsersController < ApplicationController
       phone_number: row[5],
       status: row[6],
       tl_email: row[7],
-      call_center_shift_time: row[8]
+      shift_time_id: row[8]
     }
 
-
-    tl_id = User.find_by(email: user_details.tl_email)&.id
-    cc_shift_id = CallCenterShiftTime.find_by(name: user_details.call_center_shift_time.humanize)&.id
-    is_user_valid = is_invalid_user(user_details.email, tl_id, cc_shift_id, type)
+    team_lead = User.find_by(email: user_details.tl_email)
+    cc_shift_id = ShiftTime.find_by(name: user_details.call_center_shift_time.humanize)&.id
+    is_user_valid = is_invalid_user(user_details.email, team_lead, cc_shift_id, user_details.designation)
     if is_user_valid
       not_created_user << {email: user_details.email, error_msg:is_user_valid}
     else
@@ -63,11 +62,11 @@ class Api::UsersController < ApplicationController
       user.gender = user_details.gender
       user.doj = user_details.doj
       user.status = user_details.status
-      user.call_center_shift_time_id = cc_shift_id
+      user.shift_time_id = cc_shift_id
       user.save
-
-      query = type == 'agent'  ? {mapping_type: 'team lead', mapping_type_id: tl_id} : {mapping_type: current_user.role, mapping_type_id: current_user.id}
-      TeamMapping.where(mapping_with: user).where(query).first_or_create!
+      query = user_details == 'agent'  ? {mapping_type: team_lead&.roles&.name, mapping_id: team_lead&.id}
+                                       : {mapping_type: current_user&.roles&.name, mapping_id: current_user.id}
+      Relationship.where(with_type: user).where(query).first_or_create!
     end
 
 
@@ -78,10 +77,10 @@ class Api::UsersController < ApplicationController
 
   end
 
-  def is_invalid_user(email, tl_email, cc_shift_time_id, type)
+  def is_invalid_user(email, team_lead, cc_shift_time_id, designation)
     error_msg = ''
     error_msg = 'User Already exist' if User.exists?(email: email)
-    error_msg += ' Team Leader not present in our data base' unless tl_email && type != 'team leader'
+    error_msg += ' Team Leader not present in our data base' unless team_lead && designation != 'team leader'
     error_msg += ' Call center shift not present' unless cc_shift_time_id
 
     error_msg
