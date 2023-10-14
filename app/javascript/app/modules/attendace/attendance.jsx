@@ -254,7 +254,7 @@ const Attendance = ({}) => {
                             ))}
                             {monthDays && monthDays.map((day,index) => (
                                 <td className='agent-details' key={`${day.replace(/\s/g, '')}${agents.email}`}>
-                                    <div key={`${day.replace(/\s/g, '')}${agents.email}`}>
+                                    <div  key={`${day.replace(/\s/g, '')}${agents.email}`}>
                                         <Autocomplete
                                             key={`${day.replace(/\s/g, '')}${agents.email}`}
                                             className='attendance-dropdown'

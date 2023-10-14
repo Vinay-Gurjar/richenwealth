@@ -16,16 +16,10 @@ class Api::Auth::SessionsController < ActionController::Base
       #   send_sms("Your OTP is #{user.otp} - BJP SARAL", params[:phone_number])
       # end
       response = SessionResponce.success('Otp Sent successfully', {identification_token: user.jti})
-
       render json: {json: response, status: response[:code]}, status: :ok
-      # respond_to do |format|
-      #   format.json { render json: response, status: response[:code] }
-      # end
     rescue => e
       response = SessionResponce.error(e.message)
-      respond_to do |format|
-        format.json { render json: response, status: response[:code] }
-      end
+      render json: {json: response, status: response[:code]}, status: :bad_request
     end
   end
 
@@ -37,20 +31,14 @@ class Api::Auth::SessionsController < ActionController::Base
         handle_correct_login(user)
         data =  payload(user).merge!(get_user_details(user))
         response = SessionResponce.success('Login successfully', data)
-        respond_to do |format|
-          format.json { render json: response, status: response[:code] }
-        end
+        render json: {json: response, status: response[:code]}, status: :ok
       else
         response = SessionResponce.error('Invalid OTP')
-        respond_to do |format|
-          format.json { render json: response, status: response[:code] }
-        end
+        render json: {json: response, status: response[:code]}, status: :bad_request
       end
     rescue => e
       response = SessionResponce.error(e.message)
-      respond_to do |format|
-        format.json { render json: response, status: response[:code] }
-      end
+      render json: {json: response, status: response[:code]}, status: :bad_request
     end
   end
 

@@ -21,6 +21,7 @@
     "esbuild-plugin-svgr": "^2.0.0",
     "esbuild-sass-plugin": "^2.10.0",
     "moment": "^2.29.4",
+    "mui-one-time-password-input": "^2.0.0",
     "papaparse": "^5.4.1",
     "postcss": "^8.4.26",
     "react": "^18.2.0",

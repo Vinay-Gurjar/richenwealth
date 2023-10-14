@@ -46,6 +46,6 @@
     width: 10rem;
     border: none;
 }
-fieldset {
+.team-leaders-dropdown .MuiOutlinedInput-notchedOutline {
     border: none !important;
 }
