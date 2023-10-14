@@ -9,3 +9,7 @@ export const getTodayDate = () => {
     formattedToday = dd + '/' + mm + '/' + yyyy;
     return formattedToday
 }
+
+export const isValuePresent = (value) => {
+    return value !== null && value !== undefined && value !== '' && value.length !== 0;
+}
