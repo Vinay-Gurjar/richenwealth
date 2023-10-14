@@ -6,6 +6,17 @@ Rails.application.routes.draw do
 
   mount Sidekiq::Web => "/sidekiq"
 
+  namespace :api do
+    post 'users/import_users' => 'file_import#import_file'
+    namespace :auth do
+      post '/user/login' => 'sessions#send_otp'
+      post '/user/submit_otp' =>'sessions#submit_otp'
+    end
+  end
+
+
+
+
   #noinspection RailsParamDefResolve
   match '*path', to: 'home#index', via: :all, constraints: lambda { |req|
     req.path.exclude? 'rails/active_storage'
