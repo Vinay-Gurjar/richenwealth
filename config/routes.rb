@@ -6,9 +6,15 @@ Rails.application.routes.draw do
 
   mount Sidekiq::Web => "/sidekiq"
 
+  namespace :api do
+    post 'users/import_users' => 'file_import#import_file'
+    namespace :auth do
+      post '/user/login' => 'sessions#send_otp'
+      post '/user/submit_otp' =>'sessions#submit_otp'
+    end
+  end
 
 
-  post 'api/users/import_users' => 'api/users#import_file'
 
 
   #noinspection RailsParamDefResolve

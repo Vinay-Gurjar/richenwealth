@@ -90,8 +90,73 @@ const FileUpload = ({}) => {
         }
     };
 
+const [ jti, setJti] = useState()
+    const login = async () => {
+        try {
+            const formData = new FormData();
+            formData.append('phone_number', '9999223772');
+
+            const response = await fetch('http://localhost:3000/api/auth/user/login', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setJti(data.data.identification_token)
+                console.log('CSV file uploaded and processed:', data);
+            } else {
+                console.error('Failed to upload CSV file.');
+            }
+        } catch (error) {
+            console.error('An error occurred:', error);
+        }
+    }
+
+    const makePostRequest = () => {
+        const apiUrl = '/api/auth/user/login'
+        const formData = new FormData();
+        formData.append('phone_number', '9999223772');
+        return axios.post(apiUrl, formData)
+            .then((response) => {
+                // Handle the successful response here
+                console.log('Response Data:', response.data);
+                return response.data; // You can return the data or do something else with it
+            })
+            .catch((error) => {
+                // Handle any errors here
+                console.error('Error:', error);
+                throw error; // You can throw the error or handle it in your component
+            });
+    };
+
+    const submit = async () => {
+        try {
+            const formData = new FormData();
+            formData.append('identification_token', jti);
+            formData.append('otp', 123456);
+
+            const response = await fetch('http://localhost:3000/api/auth/user/submit_otp', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('CSV file uploaded and processed:', data);
+            } else {
+                console.error('Failed to upload CSV file.');
+            }
+        } catch (error) {
+            console.error('An error occurred:', error);
+        }
+    };
+
+
     return (
         <div className='upload-file-container align-center' >
+            <h1 onClick={makePostRequest}>login</h1>
+            <h1 onClick={submit}>submit</h1>
             <div className='file-type-containe align-center'>
                 <Autocomplete
                     className='team-leaders-dropdown'

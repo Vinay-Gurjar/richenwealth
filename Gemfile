@@ -79,3 +79,4 @@ gem 'listen'
 gem 'sidekiq'
 gem 'sidekiq-cron'
 gem "rolify"
+gem 'jwt'
