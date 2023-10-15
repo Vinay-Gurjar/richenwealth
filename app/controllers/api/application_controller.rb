@@ -16,14 +16,11 @@ class Api::ApplicationController < ActionController::Base
       end
     else
       response = SessionResponce.error('Authentication token not available')
-      respond_to do |format|
-        format.json { render json: response, status: response[:code] }
-      end
+      render json: {message: 'Authentication token not available', status: false}, status: :ok
+
     end
   rescue JWT::VerificationError, JWT::DecodeError => e
     response = SessionResponce.error("Access denied!. Token invalid. #{e.message}")
-    respond_to do |format|
-      format.json { render json: response, status: response[:code] }
-    end
+    render json: {message: "Access denied!. Token invalid. #{e.message}", status: false}, status: :bad_request
   end
 end

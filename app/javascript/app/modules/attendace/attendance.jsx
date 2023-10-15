@@ -176,18 +176,12 @@ const Attendance = ({}) => {
         return agent
     }
     const changeAttendance = (agentId, day) => (event, value) => {
-        console.log(agentDetails,'details')
         agentDetails.map((agent) => {
             if (agent.id === agentId) {
                 agent.attendance[0][day] = value.value
             }
         })
     }
-
-    useEffect(() => {
-        console.log(agentDetails,'details')
-        console.log(selectedDate)
-    }, [agentDetails]);
 
     const attendanceColor = (value) => {
         let color = '#000000'
