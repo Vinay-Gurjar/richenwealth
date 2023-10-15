@@ -1,7 +1,7 @@
 
 module FileImportHelper
   include ApplicationHelper
-  def create_agents(row, type)
+  def create_user(row)
     not_created_user = ''
     user_details = {
       doj: row[0],
@@ -17,7 +17,7 @@ module FileImportHelper
 
     team_lead = User.find_by(email: user_details[:tl_email])
     cc_shift_id = ShiftTime.find_by(name: user_details[:shift_time].humanize)&.id
-    is_user_invalid = is_invalid_user(user_details[:email], team_lead, cc_shift_id, user_details[:designation])
+    is_user_invalid = is_invalid_user(user_details[:email], team_lead, cc_shift_id)
     if is_user_invalid.present?
       not_created_user = {email: user_details[:email], reason: is_user_invalid}
     else
@@ -32,16 +32,11 @@ module FileImportHelper
       user.shift_time_id = cc_shift_id
       user.created_by = current_user
       user.save
-      user.add_role(:agent)
-      r = Relationship.new
-      r.mapping_type = 'TeamLeader'
-      r.mapping_id = team_lead&.id
-      r.with_type = user
-      r.save
-
-      # query = type == 'agent'  ? {mapping_type: 'team_lead', mapping_id: team_lead&.id}
-      #           : {mapping_type: current_user&.roles&.name, mapping_id: current_user.id}
-      # Relationship.create!(with_type: user).where(query)
+      user_details[:designation].gsub('_', ' ').downcase == 'team leader' ? user.add_role(:team_lead) : user.add_role(:agent)
+      m = AgentTeamLeadMapping.new
+      m.team_leader = team_lead
+      m.team_member = user
+      m.save
     end
 
     not_created_user
@@ -70,11 +65,11 @@ module FileImportHelper
   end
 
 
-  def is_invalid_user(email, team_lead, cc_shift_time_id, designation)
+  def is_invalid_user(email, team_lead, cc_shift_time_id)
 
     error_msg = ''
     error_msg = 'User Already exist' if User.exists?(email: email)
-    error_msg += ' Team Leader not present in our data base' unless team_lead.present? && designation != 'Team Leader' && team_lead.has_role?("team_lead")
+    error_msg += ' Team Leader not present in our data base' unless team_lead.present?  && team_lead.has_role?("team_lead")
     error_msg += ' Call center shift not present' unless cc_shift_time_id
     error_msg
   end
