@@ -65,6 +65,7 @@ class Api::Auth::SessionsController < ActionController::Base
       id: user.id,
       name: user.name,
       phone_number: user.phone_number,
+      cc_id: user.call_center_id
     }
   end
 

@@ -10,6 +10,17 @@ class User < ApplicationRecord
   validates_uniqueness_of :phone_number
   validates :phone_number, presence: true
   validates :email, presence: true
+  # Association for Team Lead
+  has_many :agent_team_lead_mappings, foreign_key: 'team_leader_id'
+  has_many :agents, through: :agent_team_lead_mappings, source: :team_member
+
+  # Associations for Agents
+  has_many :team_member_mappings, foreign_key: 'team_member_id', class_name: 'AgentTeamLeadMapping'
+  has_many :team_leader, through: :team_member_mappings, source: :team_leader
+
+  def get_user_attendance
+
+  end
 
 
 

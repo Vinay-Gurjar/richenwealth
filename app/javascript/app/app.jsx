@@ -46,7 +46,7 @@ function App() {
 
     return (
         <>
-            <ApiContext.Provider  value={{setIsLogin, setUserDetails}} >
+            <ApiContext.Provider  value={{setIsLogin, setUserDetails,userDetails}} >
                 <HeaderBar userDetails={userDetails} />
                 {loader ?
                     <BackDrop toggle={loader}/> :

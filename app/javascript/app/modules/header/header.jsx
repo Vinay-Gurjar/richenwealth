@@ -40,7 +40,7 @@ const HeaderBar = ({ userDetails }) => {
                 </div>
                 <div className="right-header-content">
                     <div className="user-profile-container">
-                        <span className="user-name">{userDetails?.use}</span>
+                        <span className="user-name">{userDetails?.name}</span>
                     </div>
 
                     {/* Only Screen For Mobile */}

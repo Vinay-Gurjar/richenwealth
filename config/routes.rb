@@ -8,6 +8,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     post 'users/import_users' => 'file_import#import_file'
+    get '/call_center/employees' => 'users#call_center_users'
     namespace :auth do
       post '/user/login' => 'sessions#send_otp'
       post '/user/submit_otp' =>'sessions#submit_otp'
