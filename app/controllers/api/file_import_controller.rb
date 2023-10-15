@@ -17,7 +17,7 @@ class Api::FileImportController < Api::ApplicationController
           if file_type == 'apr'
             not_created_entry << create_reports(row, report_time)
           else
-            not_created_entry << create_agents(row, file_type)
+            not_created_entry << create_user(row)
           end
         end
         render json: { success: true, data: data, not_created_entry: not_created_entry }
