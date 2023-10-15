@@ -2,10 +2,14 @@ class User < ApplicationRecord
   rolify
   belongs_to :shift_time
   belongs_to :call_center
+  belongs_to :created_by, class_name: 'User'
   has_secure_token :jti
   enum gender: { male: 'Male', female: 'Female', other: 'Other' }
   enum status: { active: 'Active', inactive: 'Inactive' }
-
+  validates_uniqueness_of :email
+  validates_uniqueness_of :phone_number
+  validates :phone_number, presence: true
+  validates :email, presence: true
 
 
 

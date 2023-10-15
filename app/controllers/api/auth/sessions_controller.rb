@@ -1,6 +1,6 @@
 class Api::Auth::SessionsController < ActionController::Base
   protect_from_forgery with: :null_session
-  # include ApplicationHelper
+  include ApplicationHelper
 
   def send_otp
     begin
@@ -30,11 +30,12 @@ class Api::Auth::SessionsController < ActionController::Base
       if user.present? && user.validate_otp(params[:otp])
         handle_correct_login(user)
         data =  payload(user).merge!(get_user_details(user))
-        response = SessionResponce.success('Login successfully', data)
-        render json: {json: response, status: response[:code]}, status: :ok
+        session[:user_id] = user.id
+        # response = SessionResponce.success('Login successfully', data)
+        render json: {data: data,message: 'Login successfully', status: true}, status: :ok
       else
-        response = SessionResponce.error('Invalid OTP')
-        render json: {json: response, status: response[:code]}, status: :bad_request
+        # response = SessionResponce.error('Invalid OTP')
+        render json: {message: 'Invalid OTP', status: false}, status: :bad_request
       end
     rescue => e
       response = SessionResponce.error(e.message)
@@ -64,7 +65,6 @@ class Api::Auth::SessionsController < ActionController::Base
       id: user.id,
       name: user.name,
       phone_number: user.phone_number,
-      # address: user.address,
     }
   end
 

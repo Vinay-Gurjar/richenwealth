@@ -1,14 +1,14 @@
 class Api::FileImportController < Api::ApplicationController
   protect_from_forgery with: :null_session
   before_action :authenticate_request!
-  include FileImport
+  include FileImportHelper
   require 'csv'
 
   def import_file
     begin
       file = params[:csv_file]
-      file_type = [:file_type]
-      report_time = [:report_time]
+      file_type = params[:file_type]
+      report_time = params[:report_time]
       if file.present? && file.original_filename.ends_with?(".csv")
         # Read the CSV file and process its data
         data = []
@@ -28,11 +28,6 @@ class Api::FileImportController < Api::ApplicationController
       render json: { success: false, error: "An error occurred: #{e.message}" }
     end
   end
-
-
-
-
-
 
 end
 

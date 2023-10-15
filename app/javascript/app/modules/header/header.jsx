@@ -5,7 +5,7 @@ import MenuIcon from '../../../../../app/assets/images/menuIcon.svg'
 import SaralIcon from '../../../../../app/assets/images/saralLogo.svg'
 import {FormControl, InputLabel} from "@mui/material";
 
-const HeaderBar = ({ isSaralUser = '', language = '', languages = '', userName = 'vijay kumar' }) => {
+const HeaderBar = ({ userDetails }) => {
     const [name, setName] =  useState ('')
     return (
         <Toolbar className="header-bg" id="header">
@@ -40,7 +40,7 @@ const HeaderBar = ({ isSaralUser = '', language = '', languages = '', userName =
                 </div>
                 <div className="right-header-content">
                     <div className="user-profile-container">
-                        <span className="user-name">{userName}</span>
+                        <span className="user-name">{userDetails?.use}</span>
                     </div>
 
                     {/* Only Screen For Mobile */}

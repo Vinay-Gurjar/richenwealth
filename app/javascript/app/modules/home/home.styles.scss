@@ -3,3 +3,59 @@
   color: orange;
   font-weight: bold;
 }
+
+.login-component {
+  margin-left: auto;
+  width: 35%;
+  margin-top: 5%;
+}
+
+.login-main-heading {
+  color: darkblue;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+}
+
+.login-sub-heading {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+}
+
+.login-title {
+  margin-top: 5rem;
+  margin-left: 1rem;
+}
+
+.submit-button {
+  color: white;
+  width: 25rem;
+  height: 3rem;
+  border-radius: 3rem;
+  background: #4F84E3;
+  box-shadow: 2px 5px 10px rgba(0, 0, 0, 0.3);
+  border: none;
+  font-weight: 600
+}
+
+.transparent-input {
+  border: 1px solid #ccc;
+  padding-left: 25px;
+  background: transparent;
+  color: #000;
+  outline: none;
+  width: 25rem;
+  border-radius: 3rem;
+  height: 3rem;
+}
+
+.input-container {
+  margin-top: 2rem;
+}
+
+.login-buttons {
+  margin-top: 3rem;
+}
+
+.otp-input {
+  width: 15rem;
+}
