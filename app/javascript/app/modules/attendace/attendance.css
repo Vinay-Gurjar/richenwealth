@@ -29,6 +29,9 @@
     font-size: 0.6rem;
 }
 
+.attendance-dropdown .MuiIconButton {
+    display : none
+}
 .attendance-dropdown .MuiOutlinedInput-notchedOutline {
     border: none !important;
 }

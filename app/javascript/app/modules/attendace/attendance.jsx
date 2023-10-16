@@ -14,6 +14,12 @@ const Attendance = ({}) => {
     const [selectedDate,setSelectedDate] =useState([])
     const [ccEmployees, setCcEmployees] =useState([])
     const [loader, setLoader] =useState(false)
+    const today = new Date(); // Create a new Date object for the current date
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth() + 1;
+    const currentDay = today.getDate();
+    const fullDate = `${currentYear}-${currentMonth.toString().padStart(2, '0')}-${currentDay.toString().padStart(2, '0')}`;
+
     const config = {
         headers: {
             'Authorization': `${JSON.parse(localStorage.getItem('user_details')).auth_token}`,
@@ -138,9 +144,11 @@ const [count,setCount] =useState(0)
       return msg
     }
 
-    const compareDoj = (doj, currentDate) => {
-        return doj > currentDate
+    const compareDates = (smallDate, largeDate) => {
+        return smallDate > largeDate
     }
+
+    console.log(userDetails.user_role)
 
     return (
         <>
@@ -180,10 +188,10 @@ const [count,setCount] =useState(0)
                             {attendanceDays && attendanceDays.map((day,index) => (
                                 <td className='agent-details' key={`${day.replace(/\s/g, '')}${agents.email}`}>
                                     <div  key={`${day.replace(/\s/g, '')} ${index} ${agents.email}`}>
-                                        {console.log()}
                                         <Tooltip title={getUpdatedBy(agents.attendance[0], day.replace(/\s/g, ''))}>
                                         <Autocomplete
-                                            disabled={compareDoj(agents.doj , getFullDate(attendanceYear, day))}
+                                            disabled={compareDates(agents.doj , getFullDate(attendanceYear, day)) ||
+                                                      compareDates(fullDate , getFullDate(attendanceYear, day)) && (!userDetails?.roles.includes('call_center_manager') && !userDetails?.roles.includes('admin')) }
                                             key={`${day.replace(/\s/g, '')}`}
                                             className='attendance-dropdown'
                                             options={attendanceType}
