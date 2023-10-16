@@ -1,12 +1,54 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { Toolbar, Select, MenuItem, Icon } from '@material-ui/core';
 import './header.css'; // Import your CSS file
 import MenuIcon from '../../../../../app/assets/images/menuIcon.svg'
 import SaralIcon from '../../../../../app/assets/images/saralLogo.svg'
 import {FormControl, InputLabel} from "@mui/material";
+import {ApiContext} from "../ApiContext";
 
 const HeaderBar = ({ userDetails }) => {
+    const {setIsLogin,setUserDetails, setAttendanceYear, setAttendanceMonth, setAttendanceDays} = useContext(ApiContext)
     const [name, setName] =  useState ('')
+
+    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+    const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());// January
+    const [daysInMonth, setDaysInMonth] = useState([]);
+    const getDaysInMonth = () => {
+        const year = selectedYear;
+        const month = selectedMonth;
+        const startDate = new Date(year, month, 1);
+        const endDate = new Date(year, month + 1, 0);
+        const days = [];
+        let currentDate = startDate;
+
+        while (currentDate <= endDate) {
+            days.push(new Date(currentDate));
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+        return days;
+    };
+
+    const monthDays = [...getDaysInMonth().map(day => {
+        const dayOfMonth = day.getDate().toString().padStart(2, '0');
+        const monthName = day.toLocaleString('default', { month: 'short' });
+        return `${monthName} ${dayOfMonth}`;
+    }),];
+
+
+    const handleYearChange = (event) => {
+        setSelectedYear(parseInt(event.target.value));
+    };
+
+    const handleMonthChange = (event) => {
+        setSelectedMonth(parseInt(event.target.value));
+    };
+    useEffect(() => {
+        setAttendanceDays(monthDays)
+        setAttendanceMonth(selectedMonth)
+        setAttendanceYear(selectedYear)
+    },[selectedMonth])
+
+
     return (
         <Toolbar className="header-bg" id="header">
             <div className="left-header-container">
@@ -24,7 +66,7 @@ const HeaderBar = ({ userDetails }) => {
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
                         // value={language}
-                        label="Shift"
+                        // label="Shift"
                         // onChange={changeLang}
                     >
                         <MenuItem value={'en'}>08 AM to 3 PM</MenuItem>
@@ -32,7 +74,42 @@ const HeaderBar = ({ userDetails }) => {
                         <MenuItem value={'tl'}>3 PM to 9 PM</MenuItem>
                     </Select>
                 </FormControl>
+            </div>
 
+            <div className='attendance-dropdowns'>
+                <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+                    <InputLabel id="demo-simple-select-label">Years</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={selectedYear}
+                        // label="Attendance Year"
+                        onChange={handleYearChange}
+                    >
+                        {Array.from({ length: 10 }, (_, i) => (
+                            <MenuItem key={i} value={new Date().getFullYear() - i}>
+                                {new Date().getFullYear() - i}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+
+                <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+                    <InputLabel id="demo-simple-select-label">Months</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={selectedMonth}
+                        // label="Attendance Month"
+                        onChange={handleMonthChange}
+                    >
+                        {Array.from({ length: 12 }, (_, i) => (
+                            <MenuItem  key={i} value={i} >
+                                {new Date(selectedYear, i).toLocaleString('default', { month: 'short' })}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
             </div>
 
             <div>

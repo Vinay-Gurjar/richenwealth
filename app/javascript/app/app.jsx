@@ -28,6 +28,9 @@ function App() {
         isValuePresent(localStorage.getItem('user_details')) ?
                   localStorage.getItem('user_details') : '')
     const [isLogin, setIsLogin] = useState(userDetails?.auth_token)
+    const [attendanceYear,setAttendanceYear] = useState()
+    const [attendanceMonth,setAttendanceMonth] = useState()
+    const [attendanceDays,setAttendanceDays] = useState()
     const [loader, setLoader] = useState(true)
 
     useEffect(() => {
@@ -44,9 +47,11 @@ function App() {
 
     }, [isLogin || userDetails]);
 
+
     return (
         <>
-            <ApiContext.Provider  value={{setIsLogin, setUserDetails,userDetails}} >
+            <ApiContext.Provider  value={{
+                setIsLogin,  setUserDetails, userDetails, attendanceDays, setAttendanceMonth, attendanceMonth, attendanceYear, setAttendanceYear, setAttendanceDays}} >
                 <HeaderBar userDetails={userDetails} />
                 {loader ?
                     <BackDrop toggle={loader}/> :
@@ -56,7 +61,6 @@ function App() {
                     </Routes>
                 }
             </ApiContext.Provider>
-
         </>
     );
 }
