@@ -138,6 +138,10 @@ const [count,setCount] =useState(0)
       return msg
     }
 
+    const compareDoj = (doj, currentDate) => {
+        return doj > currentDate
+    }
+
     return (
         <>
         {loader ?    <Backdrop toggle={loader} /> :
@@ -176,8 +180,10 @@ const [count,setCount] =useState(0)
                             {attendanceDays && attendanceDays.map((day,index) => (
                                 <td className='agent-details' key={`${day.replace(/\s/g, '')}${agents.email}`}>
                                     <div  key={`${day.replace(/\s/g, '')} ${index} ${agents.email}`}>
+                                        {console.log()}
                                         <Tooltip title={getUpdatedBy(agents.attendance[0], day.replace(/\s/g, ''))}>
                                         <Autocomplete
+                                            disabled={compareDoj(agents.doj , getFullDate(attendanceYear, day))}
                                             key={`${day.replace(/\s/g, '')}`}
                                             className='attendance-dropdown'
                                             options={attendanceType}
