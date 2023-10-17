@@ -5,7 +5,7 @@ class User < ApplicationRecord
   belongs_to :created_by, class_name: 'User'
   has_secure_token :jti
   enum gender: { male: 'Male', female: 'Female', other: 'Other' }
-  enum status: { active: 'Active', inactive: 'Inactive' }
+  enum status: { Active: 'Active', Inactive: 'Inactive' }
   validates_uniqueness_of :email
   validates_uniqueness_of :phone_number
   validates :phone_number, presence: true

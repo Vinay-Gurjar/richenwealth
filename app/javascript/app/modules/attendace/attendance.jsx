@@ -82,12 +82,13 @@ const [count,setCount] =useState(0)
 
     const isAgentActive = (status) => {
         let agent = true
-        if (status === 'Inactive') {
+        if (status === 'inactive') {
             agent = false
         }
         return agent
     }
     const changeAttendance = (userId, day) => (event, value) => {
+
         const fullDate = getFullDate(attendanceYear,day)
         updateAttendance(userId, fullDate, value.value)
         ccEmployees.map((agent) => {
@@ -96,6 +97,9 @@ const [count,setCount] =useState(0)
             }
         })
     }
+
+    useEffect
+    console.log(ccEmployees)
 
     const attendanceColor = (value) => {
         let color = '#000000'
@@ -151,10 +155,10 @@ const [count,setCount] =useState(0)
     console.log(userDetails.user_role)
 
     return (
-        <>
+        <div className='attendance-component'>
         {loader ?    <Backdrop toggle={loader} /> :
             <table className="table">
-                <thead>
+                <thead style={{ overflowX: 'hidden' }}>
                 <tr>
                     {tableHeaders &&
                         tableHeaders.map((subHeader, index) => (
@@ -163,6 +167,7 @@ const [count,setCount] =useState(0)
                             </th>
                         ))
                     }
+
                     {attendanceDays &&
                         attendanceDays.map((subHeader, index) => (
                             <th style={{border: '1px solid black'}} className='attendance-table-header' key={index}>
@@ -172,11 +177,9 @@ const [count,setCount] =useState(0)
                     }
                 </tr>
                 </thead>
-                <tbody>
-
+                <tbody style={{ overflowX: 'hidden' }}>
                     {ccEmployees && ccEmployees.map((agents, index) => (
-                        <tr key={index}>
-
+                        <tr className='test' key={index}>
                             {agents && Object.values(agents).map((agent,index) => (
                                 index > 0 && index < 9 ?
                                 <td key={index} className='agent-details' style={{color: isAgentActive(Object.values(agents)[7]) ? '' : 'red' }}>
@@ -184,7 +187,6 @@ const [count,setCount] =useState(0)
                                 </td>
                             : ''
                             ))}
-
                             {attendanceDays && attendanceDays.map((day,index) => (
                                 <td className='agent-details' key={`${day.replace(/\s/g, '')}${agents.email}`}>
                                     <div  key={`${day.replace(/\s/g, '')} ${index} ${agents.email}`}>
@@ -212,7 +214,7 @@ const [count,setCount] =useState(0)
                 </tbody>
             </table>
             }
-        </>
+        </div>
     )
 }
 

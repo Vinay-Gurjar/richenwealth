@@ -22,3 +22,5 @@ export const getFullDate = (selectedYear, inputDate) => {
 export const findValueFromArray = (listArray, findValue) => {
    return  listArray.find(value => value.id === findValue)
 }
+
+export const attendancePath = '/'
