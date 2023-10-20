@@ -14,11 +14,7 @@ const HeaderBar = ({}) => {
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
     const [ccTiming, setCcTiming] = useState([]);
-    const config = {
-        headers: {
-            'Authorization': `${JSON.parse(localStorage.getItem('user_details')).auth_token}`,
-        }
-    }
+
     const getDaysInMonth = () => {
         const year = selectedYear;
         const month = selectedMonth;
@@ -60,7 +56,9 @@ const HeaderBar = ({}) => {
             params: {
                 user_id: userDetails.id,
             },
-            headers: config.headers
+            headers: {
+                'Authorization': `${JSON.parse(localStorage.getItem('user_details')).auth_token}`,
+            }
         })
             .then((response) => {
                 setCcTiming(response.data.data)
@@ -78,7 +76,9 @@ const HeaderBar = ({}) => {
             params: {
                 shift_id: callCenterShift,
             },
-            headers: config.headers
+            headers: {
+                'Authorization': `${JSON.parse(localStorage.getItem('user_details')).auth_token}`,
+            }
         })
             .then((response) => {
                 setTimeList(response.data.data)
