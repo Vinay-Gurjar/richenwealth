@@ -1,9 +1,10 @@
 class Api::UsersController <  Api::ApplicationController
   before_action :authenticate_request!
   include ApplicationHelper
+  include UsersHelper
 
   def call_center_users
-    if current_user.has_role?(:admin)
+    if current_user.has_role?(:admin) || current_user.has_role?(:super_admin)
     users = User.joins(:roles, :team_leader).where(roles: {name: ['agent', 'team_lead']}).where(call_center_id: params[:cc_id])
     else
       users = User.joins(:roles, :team_leader).where(roles: {name: ['agent', 'team_lead']}).where(call_center_id: current_user&.call_center_id)
@@ -59,6 +60,21 @@ class Api::UsersController <  Api::ApplicationController
     date = params[:date] ? params[:date] :Date.today
     team_leaders = User.with_role(:team_lead).where(call_center: current_user.call_center).select(:id,:name)
     render json: {data: team_leaders, center_details: "Hourly Report #{current_user.call_center&.name} Date:- #{date.strftime("%d %b")}"}, status: :ok
+  end
+
+  def team_leader_agents
+    tl_id = params[:tl_id]
+
+    # Check if the 'tl_id' parameter is provided and not blank
+    if tl_id.blank?
+      raise StandardError.new("Invalid Team Leader ID")
+    end
+
+    # Find the agents under the specified team leader
+    agents = User.find_by(id: tl_id).agents
+    agents = format_agents(agents)
+    # Render the list of agents and a message in JSON format
+    render json: { data: agents, message: "Team Leader Agents" }, status: :ok
   end
 end
 

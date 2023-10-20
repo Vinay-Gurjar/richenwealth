@@ -24,3 +24,6 @@ export const findValueFromArray = (listArray, findValue) => {
 }
 
 export const attendancePath = '/'
+export const hourlyReport = '/hourly_report'
+export const uploadFiles = '/upload_files'
+export const minimumCallConnected = '/minimum_calls_connected'

@@ -12,8 +12,11 @@ Rails.application.routes.draw do
     post 'users/import_file' => 'file_import#import_file'
     get 'call_center/employees' => 'users#call_center_users'
     post 'call_center/employee/update_attendance' => 'users#update_attendance'
-    post 'reports/agents/hourly_report' => 'report#hourly_report'
+    get 'reports/agents/hourly_report' => 'report#hourly_report'
+    get 'reports/agent/all_day_report' => 'report#get_agent_report'
+    get 'reports/agents/minimum_calls_connected' => 'report#minimum_calls_connected'
     get 'user/call_center/team_leaders' => 'users#team_leaders_list'
+    get 'user/call_center/team_leader/agents' => 'users#team_leader_agents'
 
     namespace :auth do
       post '/user/login' => 'sessions#send_otp'
