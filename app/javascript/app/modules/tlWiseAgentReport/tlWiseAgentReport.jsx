@@ -50,11 +50,14 @@ const TlWiseAgentReport = ({}) => {
     }, []);
 
     const hourlyReport = () => {
-        const formData = new FormData();
-        formData.append('date', date);
-        formData.append('rt_id', time);
-        formData.append('tl_id', selectedTeamLeader);
-        return axios.post('api/reports/agents/hourly_report', formData,config)
+        return axios.get('api/reports/agents/hourly_report', {
+            params: {
+                date: date,
+                rt_id: time,
+                tl_id: selectedTeamLeader
+            },
+            headers: config.headers
+        })
             .then((response) => {
                 setTableData(response.data.data)
                 setAgentOnCall(response.data.agents_on_call)

@@ -13,6 +13,7 @@ import {isValuePresent} from "./utils";
 import BackDrop from "./modules/back-drop/backDrop";
 import FileUpload from "./modules/fileUpload/fileUpload";
 import TlWiseAgentReport from "./modules/tlWiseAgentReport/tlWiseAgentReport";
+import AgentWiseReport from "./modules/agentWiseReport/agentWiseReport";
 
 const IndexRoutes = () => {
     return(
@@ -21,6 +22,7 @@ const IndexRoutes = () => {
                 <Route path="/minimum_calls_connected" element={<MinimumCallConnected />} />
                 <Route path="/upload_files" element={<FileUpload />} />
                 <Route path="/hourly_report" element={<TlWiseAgentReport />} />
+                <Route path="/agent_wise_report" element={<AgentWiseReport />} />
             </Routes>
     )
 }
@@ -36,6 +38,8 @@ function App() {
     const [callCenterShift,setCallCenterShift] = useState()
     const [timeList, setTimeList] = useState([])
     const [loader, setLoader] = useState(true)
+    const [minimumCallsTime, setMinimumCallsTime] = useState();
+    const [minimumCallsDate, setMinimumCallsDate] = useState();
 
     useEffect(() => {
         if (isValuePresent(localStorage.getItem('user_details'))) {
@@ -58,7 +62,8 @@ function App() {
                 setIsLogin,callCenterShift, setCallCenterShift, setUserDetails,
                 userDetails, attendanceDays, setAttendanceMonth, attendanceMonth,
                 attendanceYear, setAttendanceYear, setAttendanceDays,
-                timeList ,setTimeList}} >
+                timeList ,setTimeList, minimumCallsTime, setMinimumCallsTime,
+                minimumCallsDate, setMinimumCallsDate }} >
                 <HeaderBar />
                 {loader ?
                     <BackDrop toggle={loader}/> :

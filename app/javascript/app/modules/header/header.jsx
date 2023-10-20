@@ -5,15 +5,25 @@ import MenuIcon from '../../../../../app/assets/images/menuIcon.svg'
 import SaralIcon from '../../../../../app/assets/images/saralLogo.svg'
 import {FormControl, InputLabel} from "@mui/material";
 import {ApiContext} from "../ApiContext";
-import {attendancePath, isValuePresent} from "../../utils";
+import {attendancePath, isValuePresent, minimumCallConnected} from "../../utils";
 import axios from "axios";
 import AutoCompleteDropdown from "../autoCompleteDropdown/autoCompleteDropdown";
+import DatePickerComp from "../datePicker/datePickerComp";
 
 const HeaderBar = ({}) => {
-    const {setIsLogin, userDetails, callCenterShift, setTimeList, setCallCenterShift, setUserDetails, setAttendanceYear, setAttendanceMonth, setAttendanceDays} = useContext(ApiContext)
+    const {userDetails,minimumCallsTime, setMinimumCallsTime,
+        callCenterShift, timeList, setTimeList, setCallCenterShift,
+        setAttendanceYear, setAttendanceMonth, setAttendanceDays, setMinimumCallsDate} = useContext(ApiContext)
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
     const [ccTiming, setCcTiming] = useState([]);
+
+
+    useEffect(() => {
+        if (isValuePresent(timeList)) {
+            setMinimumCallsTime(timeList[0].id)
+        }
+    },[timeList])
 
     const getDaysInMonth = () => {
         const year = selectedYear;
@@ -106,6 +116,15 @@ const HeaderBar = ({}) => {
         }
     },[callCenterShift])
 
+
+    const setMinimumCallTime = (event) => {
+        setMinimumCallsTime(event.id)
+    }
+
+    const setReportDate = (date) => {
+        setMinimumCallsDate(date)
+    }
+
     return (
         <Toolbar className="header-bg" id="header">
             <div className="left-header-container">
@@ -168,7 +187,19 @@ const HeaderBar = ({}) => {
                         </FormControl>
                     </div>
                 </>
-
+            }
+            { window.location.pathname === minimumCallConnected &&
+                <>
+                    <DatePickerComp reportDate={setReportDate} borderNone={'true'}/>
+                    <AutoCompleteDropdown
+                        listArray={timeList}
+                        name={'Time'}
+                        onChangeValue={setMinimumCallTime}
+                        selectedValue={minimumCallsTime}
+                        compareValue={'time'}
+                        borderNone={'true'}
+                    />
+                </>
             }
             <div>
                 <div className="language-setting-container mt-3">
