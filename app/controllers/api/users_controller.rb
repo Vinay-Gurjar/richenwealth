@@ -41,9 +41,25 @@ class Api::UsersController <  Api::ApplicationController
     else
       render json: {message: 'Invalid User', status: true}, status: :ok
     end
-
   end
 
+  def call_center_shifts
+    shifts = ShiftTime.joins(:call_center_shift_mappings).where(call_center_shift_mappings:  {call_center_id: current_user&.call_center&.id})
+    shifts = shifts.sort()
+    render json: {data: shifts}, status: :ok
+  end
+
+  def shift_wise_timing
+    timing = ShiftWiseTime.where(shift_time_id:params[:shift_id]).select(:id, :time)
+    timing = timing.sort()
+    render json: {data: timing}, status: :ok
+  end
+
+  def team_leaders_list
+    date = params[:date] ? params[:date] :Date.today
+    team_leaders = User.with_role(:team_lead).where(call_center: current_user.call_center).select(:id,:name)
+    render json: {data: team_leaders, center_details: "Hourly Report #{current_user.call_center&.name} Date:- #{date.strftime("%d %b")}"}, status: :ok
+  end
 end
 
 

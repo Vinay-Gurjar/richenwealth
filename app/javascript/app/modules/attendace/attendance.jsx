@@ -99,7 +99,6 @@ const [count,setCount] =useState(0)
     }
 
     useEffect
-    console.log(ccEmployees)
 
     const attendanceColor = (value) => {
         let color = '#000000'
@@ -121,6 +120,7 @@ const [count,setCount] =useState(0)
         }
         return attendance
     }
+
     function transformData(data) {
         return data.reduce((acc, obj) => {
             for (const key in obj) {
@@ -151,9 +151,6 @@ const [count,setCount] =useState(0)
     const compareDates = (smallDate, largeDate) => {
         return smallDate > largeDate
     }
-
-    console.log(userDetails.user_role)
-
     return (
         <div className='attendance-component'>
         {loader ?    <Backdrop toggle={loader} /> :
@@ -197,7 +194,7 @@ const [count,setCount] =useState(0)
                                             key={`${day.replace(/\s/g, '')}`}
                                             className='attendance-dropdown'
                                             options={attendanceType}
-                                            value={attendanceType.find(value => value.value === transformData(agents.attendance[0])[day.replace(/\s/g, '')])}
+                                            value={attendanceType.find(value => value.value === transformData(agents.attendance[0])[day.replace(/\s/g, '')])  || isAttendanceSelected(agents.id, day)}
                                             isOptionEqualToValue={(option, value) => option.id === value.id}
                                             getOptionLabel={(option) => option.value || ""}
                                             onChange={changeAttendance(agents.id, day)}

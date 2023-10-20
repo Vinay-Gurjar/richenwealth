@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -7,22 +7,31 @@ import './fileUpload.css'
 import Autocomplete from "@mui/material/Autocomplete";
 import {TextField} from "@mui/material";
 import axios from "axios";
-import AutoCompleteDropdown from "../autoCompleteDropdown/autoCompleteDropdown";
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import {ApiContext} from "../ApiContext";
+import {isValuePresent} from "../../utils";
+import DatePickerComp from "../datePicker/datePickerComp";
+
 
 const FileUpload = ({}) => {
-
+    const {callCenterShift, timeList} = useContext(ApiContext)
     const [csvFile, setCsvFile] = useState()
     const [fileType, setFileType] = useState()
-    const [selectedTime, setSelectedTimer] = useState()
+    const [selectedTime, setSelectedTime] = useState()
     const [uploadFileType, setUploadFileType] = useState('')
+    const [reportDateTime, setReportDateTime] = useState('')
+    const [date, setDate] = useState()
+    const [invalidUsers, setInvalidUsers] = useState()
+
     const config = {
         headers: {
             'Authorization': `${JSON.parse(localStorage.getItem('user_details')).auth_token}`,
         }
     }
-
-    const timesArray = ['7:00 AM', '8:00 AM', '9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM', '6:00 PM', '7:00 PM', '8:00 PM'];
-    const uploadFileTypes = ['User Upload', 'Report Upload']
+     const uploadFileTypes = ['User Upload', 'Report Upload']
 
     const VisuallyHiddenInput = styled('input')({
         clip: 'rect(0 0 0 0)',
@@ -37,7 +46,7 @@ const FileUpload = ({}) => {
     });
 
     const selectTime = (event, value) => {
-        setSelectedTimer(value)
+        setSelectedTime(value.id)
     }
     const handleFileUpload = (type) => (event) => {
         setFileType(type)
@@ -48,13 +57,17 @@ const FileUpload = ({}) => {
         setUploadFileType(value)
     }
 
-    const importUsers = () => {
+    const importFile = () => {
         const formData = new FormData();
         formData.append('csv_file', csvFile);
         formData.append('file_type', fileType);
-        return axios.post('/api/users/import_users', formData,config)
+        formData.append('date', date);
+        formData.append('rt_id', selectedTime);
+        return axios.post('/api/users/import_file', formData,config)
             .then((response) => {
-                return response.data;
+                if (isValuePresent(response.data.not_created_entry)) {
+                    invalidUsersData(response.data.not_created_entry)
+                }
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -62,7 +75,14 @@ const FileUpload = ({}) => {
             });
     };
 
+    const setReportDate = (date) => {
+        setDate(date)
+    }
 
+    const invalidUsersData = (users) => {
+        setInvalidUsers(users)
+    }
+    console.log(isValuePresent(invalidUsers))
     return (
         <div className='upload-file-container align-center' >
             <div className='file-type-containe align-center'>
@@ -77,16 +97,11 @@ const FileUpload = ({}) => {
                     renderInput={(params) => <TextField {...params} label={'Reporting Type'}/>}
                 />
             </div>
-
             {uploadFileType && uploadFileType === 'User Upload' ?
             <div className='upload-btn-container align-center' >
-                {/*<Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>*/}
-                {/*    Upload Team Leaders*/}
-                {/*    <VisuallyHiddenInput accept=".csv" onChange={handleFileUpload('team leader')}  type="file" />*/}
-                {/*</Button>*/}
                 <Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
-                    Upload Agents
-                    <VisuallyHiddenInput accept=".csv" onChange={handleFileUpload('agent')}  type="file" />
+                    Upload Users
+                    <VisuallyHiddenInput accept=".csv" onChange={handleFileUpload('users')}  type="file" />
                 </Button>
             </div>
                 : ''}
@@ -96,31 +111,34 @@ const FileUpload = ({}) => {
                     Upload APR
                     <VisuallyHiddenInput accept=".csv" onChange={handleFileUpload('apr')}  type="file" />
                 </Button>
+                    <DatePickerComp reportDate={setReportDate} />
                 <div>
                     <Autocomplete
                         className='team-leaders-dropdown'
-                        disablePortal
                         id="combo-box-demo"
-                        value={selectedTime}
+                        options={timeList}
+                        value={timeList.find(value => value.id === selectedTime) || null}
+                        isOptionEqualToValue={(option, value) => option.id === value.id}
+                        getOptionLabel={(option) => option.time || ""}
                         onChange={selectTime}
-                        options={timesArray.map(data => data)}
                         blurOnSelect={true}
-                        renderInput={(params) => <TextField {...params} label={'Report Time'}/>}
+                        renderInput={(params) => <TextField {...params} label={'Report Time'}
+                        />}
                     />
                 </div>
-                {/*<AutoCompleteDropdown listArray={} onChangeValue={} selectedValue={} />*/}
                 </div>
                 : ''
             }
             {csvFile &&
                 <>
-                    <Button onClick={importUsers} className='submit-upload '>
-                        { uploadFileType === 'User Upload' ? 'Create Users' : 'Upload File' }
+                    <Button onClick={importFile} className='submit-upload '>
+                        {uploadFileType === 'User Upload' ? 'Create Users' : 'Upload File'}
                     </Button>
-
-                    <div className='upload-csv-view'>
-                        {/*<ShowCsvData csvFile={csvFile} />*/}
-                    </div>
+                    {fileType === 'users' || isValuePresent(invalidUsers) ?
+                        <div className='upload-csv-view'>
+                            <ShowCsvData csvFile={csvFile} invaliUsers={invalidUsers}/>
+                        </div> : ''
+                    }
                 </>
             }
         </div>

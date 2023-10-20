@@ -1,8 +1,8 @@
 class User < ApplicationRecord
   rolify
-  belongs_to :shift_time
+  belongs_to :shift_time, dependent: :delete
   belongs_to :call_center
-  belongs_to :created_by, class_name: 'User'
+  belongs_to :created_by, class_name: 'User', optional: true
   has_secure_token :jti
   enum gender: { male: 'Male', female: 'Female', other: 'Other' }
   enum status: { Active: 'Active', Inactive: 'Inactive' }
@@ -36,9 +36,7 @@ class User < ApplicationRecord
 
 
 
-  def user_find_by_email(email)
-    User.find_by_email(email)
-  end
+
 
   def generate_otp
     otp_expiration_mins = ENV['OTP_EXPIRATION_MINS'] ? ENV['OTP_EXPIRATION_MINS'].to_i : 1

@@ -5,16 +5,20 @@ import MenuIcon from '../../../../../app/assets/images/menuIcon.svg'
 import SaralIcon from '../../../../../app/assets/images/saralLogo.svg'
 import {FormControl, InputLabel} from "@mui/material";
 import {ApiContext} from "../ApiContext";
-import {createSearchParams, useSearchParams} from 'react-router-dom';
 import {attendancePath, isValuePresent} from "../../utils";
+import axios from "axios";
+import AutoCompleteDropdown from "../autoCompleteDropdown/autoCompleteDropdown";
 
 const HeaderBar = ({}) => {
-    const {setIsLogin, userDetails, setUserDetails, setAttendanceYear, setAttendanceMonth, setAttendanceDays} = useContext(ApiContext)
-    const [name, setName] =  useState ('')
+    const {setIsLogin, userDetails, callCenterShift, setTimeList, setCallCenterShift, setUserDetails, setAttendanceYear, setAttendanceMonth, setAttendanceDays} = useContext(ApiContext)
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-    const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());// January
-    const [daysInMonth, setDaysInMonth] = useState([]);
-    const [searchParams] = useSearchParams();
+    const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+    const [ccTiming, setCcTiming] = useState([]);
+    const config = {
+        headers: {
+            'Authorization': `${JSON.parse(localStorage.getItem('user_details')).auth_token}`,
+        }
+    }
     const getDaysInMonth = () => {
         const year = selectedYear;
         const month = selectedMonth;
@@ -51,6 +55,56 @@ const HeaderBar = ({}) => {
         setAttendanceYear(selectedYear)
     },[selectedMonth])
 
+    const CallCenterShifts = () => {
+        return axios.get('/api/user/call_center/shift',{
+            params: {
+                user_id: userDetails.id,
+            },
+            headers: config.headers
+        })
+            .then((response) => {
+                setCcTiming(response.data.data)
+                setCallCenterShift(response.data.data[0]?.id)
+                return response.data;
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                throw error;
+            });
+    }
+
+    const reportTiming = (callCenterShift) => {
+        return axios.get('/api/user/call_center/shift/timing',{
+            params: {
+                shift_id: callCenterShift,
+            },
+            headers: config.headers
+        })
+            .then((response) => {
+                setTimeList(response.data.data)
+                return response.data;
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                throw error;
+            });
+    }
+
+    useEffect(() => {
+        if (isValuePresent(userDetails)) {
+            CallCenterShifts()
+        }
+    },[userDetails])
+
+    const changeShift = (event) => {
+        setCallCenterShift(event.id)
+    }
+
+    useEffect(() => {
+        if (isValuePresent(callCenterShift)) {
+            reportTiming(callCenterShift)
+        }
+    },[callCenterShift])
 
     return (
         <Toolbar className="header-bg" id="header">
@@ -61,25 +115,23 @@ const HeaderBar = ({}) => {
                 <img src={'../../../../../public/assets/image/saralLogo.svg'}/>
                 <span className="navbar-header-title"> भारतीय जनता पार्टी </span>
             </div>
+
+            { isValuePresent(userDetails) &&
+                <div>
+                    <AutoCompleteDropdown
+                        listArray={ccTiming}
+                        name={'Shift Time'}
+                        onChangeValue={changeShift}
+                        selectedValue={callCenterShift}
+                        compareValue={'time'}
+                        width={'15rem'}
+                        borderNone={'true'}
+                    />
+                </div>
+
+            }
             {isValuePresent(userDetails) && window.location.pathname === attendancePath &&
                 <>
-                    <div>
-                        <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-                            <InputLabel id="demo-simple-select-label">Shift</InputLabel>
-                            <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                // value={language}
-                                // label="Shift"
-                                // onChange={changeLang}
-                            >
-                                <MenuItem value={'en'}>08 AM to 3 PM</MenuItem>
-                                <MenuItem value={'hn'}>09 AM to 6 PM</MenuItem>
-                                <MenuItem value={'tl'}>3 PM to 9 PM</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </div>
-
                     <div className='attendance-dropdowns'>
                         <FormControl sx={{m: 1, minWidth: 120}} size="small">
                             <InputLabel id="demo-simple-select-label">Years</InputLabel>

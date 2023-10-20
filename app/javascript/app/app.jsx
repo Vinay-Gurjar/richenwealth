@@ -12,6 +12,7 @@ import MinimumCallConnected from "./modules/minimumCallConnected/minimumCallConn
 import {isValuePresent} from "./utils";
 import BackDrop from "./modules/back-drop/backDrop";
 import FileUpload from "./modules/fileUpload/fileUpload";
+import TlWiseAgentReport from "./modules/tlWiseAgentReport/tlWiseAgentReport";
 
 const IndexRoutes = () => {
     return(
@@ -19,6 +20,7 @@ const IndexRoutes = () => {
                 <Route path="/" element={<Attendance />} />
                 <Route path="/minimum_calls_connected" element={<MinimumCallConnected />} />
                 <Route path="/upload_files" element={<FileUpload />} />
+                <Route path="/hourly_report" element={<TlWiseAgentReport />} />
             </Routes>
     )
 }
@@ -31,6 +33,8 @@ function App() {
     const [attendanceYear,setAttendanceYear] = useState()
     const [attendanceMonth,setAttendanceMonth] = useState()
     const [attendanceDays,setAttendanceDays] = useState()
+    const [callCenterShift,setCallCenterShift] = useState()
+    const [timeList, setTimeList] = useState([])
     const [loader, setLoader] = useState(true)
 
     useEffect(() => {
@@ -51,8 +55,11 @@ function App() {
     return (
         <>
             <ApiContext.Provider  value={{
-                setIsLogin,  setUserDetails, userDetails, attendanceDays, setAttendanceMonth, attendanceMonth, attendanceYear, setAttendanceYear, setAttendanceDays}} >
-                <HeaderBar userDetails={userDetails} />
+                setIsLogin,callCenterShift, setCallCenterShift, setUserDetails,
+                userDetails, attendanceDays, setAttendanceMonth, attendanceMonth,
+                attendanceYear, setAttendanceYear, setAttendanceDays,
+                timeList ,setTimeList}} >
+                <HeaderBar />
                 {loader ?
                     <BackDrop toggle={loader}/> :
                 isLogin ? <IndexRoutes /> :
