@@ -6,7 +6,6 @@ export const ApiClient = axios.create({
     headers:
         {
         'X-Custom-Header': 'foobar',
-        'Authorization': localStorage.getItem('auth_token')
         },
     withCredentials: true
 });

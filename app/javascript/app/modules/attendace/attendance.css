@@ -21,7 +21,7 @@
 }
 
 .attendance-dropdown {
-   width: 1rem;
+   width: 2rem;
    margin-left: -0.5rem;
 }
 
@@ -29,6 +29,13 @@
     font-size: 0.6rem;
 }
 
+.attendance-dropdown .MuiIconButton {
+    display : none
+}
 .attendance-dropdown .MuiOutlinedInput-notchedOutline {
     border: none !important;
+}
+.attendance-component {
+    white-space: nowrap;
+    overflow-x: auto;
 }

@@ -12,7 +12,7 @@
 }
 
 .upload-csv-view {
-    width: 70%;
+
     margin-left: auto;
     margin-right: auto;
     margin-top: 4rem;
@@ -38,4 +38,8 @@
     width: 8rem !important;
     margin-left: auto !important;
     margin-right: auto !important;
+}
+
+.reporting-type {
+    width: 12rem;
 }
