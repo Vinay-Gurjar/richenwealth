@@ -3,6 +3,7 @@ module FileImportHelper
   include ApplicationHelper
   def create_user(row)
     not_created_user = ''
+
     user_details = {
       doj: row[0],
       designation: row[1],
@@ -12,35 +13,54 @@ module FileImportHelper
       phone_number: row[5],
       status: row[6],
       tl_email: row[7],
-      shift_time: row[8]
+      shift_time: row[8].humanize
     }
-    users = user_details[:designation].gsub('_', ' ').downcase == 'team leader' ? User.with_role(:call_center_manager) : User.with_role(:team_lead)
-    team_lead =  users.where(email: user_details[:tl_email]).first
-    cc_shift_id = ShiftTime.find_by(name: user_details[:shift_time].humanize)&.id
+
+    # Determine the target role based on the 'designation' field
+    target_role = user_details[:designation].gsub('_', ' ').downcase == 'team leader' ? :team_lead : :agent
+
+    # Find the team leader if applicable
+    team_lead = User.with_role(target_role == :team_lead ? :call_center_manager : :team_lead)
+                    .find_by(email: user_details[:tl_email])
+
+    # Find the shift ID based on 'shift_time'
+    cc_shift_id = ShiftTime.find_by(name: user_details[:shift_time])&.id
+
+    # Check if the user is invalid
     is_user_invalid = is_invalid_user(user_details[:email], team_lead, cc_shift_id)
+
     if is_user_invalid.present?
-      not_created_user = {email: user_details[:email], reason: is_user_invalid}
+      not_created_user = { email: user_details[:email], reason: is_user_invalid }
     else
-      user = User.new
-      user.name = user_details[:name]
-      user.email = user_details[:email]
-      user.phone_number = user_details[:phone_number]
-      user.call_center_id = current_user&.call_center_id
-      user.gender = user_details[:gender]
-      user.doj = user_details[:doj]
-      user.status = user_details[:status].humanize
-      user.shift_time_id = cc_shift_id
-      user.created_by = current_user
-      user.save
-      user_details[:designation].gsub('_', ' ').downcase == 'team leader' ? user.add_role(:team_lead) : user.add_role(:agent)
-      m = AgentTeamLeadMapping.new
-      m.team_leader = team_lead
-      m.team_member = user
-      m.save
+      # Create a new user
+      user = User.new(
+        name: user_details[:name],
+        email: user_details[:email],
+        phone_number: user_details[:phone_number],
+        call_center_id: current_user&.call_center_id,
+        gender: user_details[:gender],
+        doj: user_details[:doj],
+        status: user_details[:status],
+        shift_time_id: cc_shift_id,
+        created_by: current_user
+      )
+
+      user.add_role(target_role)
+
+      if user.save
+        # Create an AgentTeamLeadMapping if the user is a team member
+        if target_role == :agent
+          m = AgentTeamLeadMapping.new(team_leader: team_lead, team_member: user)
+          m.save
+        end
+      else
+        not_created_user = { email: user_details[:email], reason: 'User creation failed' }
+      end
     end
 
     not_created_user
   end
+
 
 
   def create_reports(row)

@@ -18,6 +18,7 @@ const Attendance = ({}) => {
     const currentYear = today.getFullYear();
     const currentMonth = today.getMonth() + 1;
     const currentDay = today.getDate();
+    const [tableHeaders, setTableHeaders] = useState([])
     const fullDate = `${currentYear}-${currentMonth.toString().padStart(2, '0')}-${currentDay.toString().padStart(2, '0')}`;
 
     const config = {
@@ -39,6 +40,7 @@ const [count,setCount] =useState(0)
             headers: config.headers})
             .then((response) => {
                 setCcEmployees(response.data.data)
+                setTableHeaders(response.data.headers)
                 setTimeout(() => {
                     setLoader(false)
                 }, 1000);
@@ -73,8 +75,7 @@ const [count,setCount] =useState(0)
         getCcEmployee()
     },[attendanceMonth || attendanceYear])
 
-    const tableHeaders = ["DOJ", "Designation", "Candidate Name", "Gender", "Email", "Team Leader", "Status", "Inactive Date"];
-    const attendanceType = [
+       const attendanceType = [
         { id: 1, value: 'P' },{ id: 2, value: 'WO' },{ id: 3, value: '1/2P' },
         { id: 4, value: 'A' },{ id: 5, value: 'OGT' },{ id: 6, value: 'TD' }
     ]
@@ -88,7 +89,6 @@ const [count,setCount] =useState(0)
         return agent
     }
     const changeAttendance = (userId, day) => (event, value) => {
-
         const fullDate = getFullDate(attendanceYear,day)
         updateAttendance(userId, fullDate, value.value)
         ccEmployees.map((agent) => {
@@ -98,7 +98,6 @@ const [count,setCount] =useState(0)
         })
     }
 
-    useEffect
 
     const attendanceColor = (value) => {
         let color = '#000000'
@@ -151,6 +150,10 @@ const [count,setCount] =useState(0)
     const compareDates = (smallDate, largeDate) => {
         return smallDate > largeDate
     }
+
+
+
+
     return (
         <div className='attendance-component'>
         {loader ?    <Backdrop toggle={loader} /> :
@@ -165,13 +168,6 @@ const [count,setCount] =useState(0)
                         ))
                     }
 
-                    {attendanceDays &&
-                        attendanceDays.map((subHeader, index) => (
-                            <th style={{border: '1px solid black'}} className='attendance-table-header' key={index}>
-                                {subHeader}
-                            </th>
-                        ))
-                    }
                 </tr>
                 </thead>
                 <tbody style={{ overflowX: 'hidden' }}>
@@ -184,7 +180,7 @@ const [count,setCount] =useState(0)
                                 </td>
                             : ''
                             ))}
-                            {attendanceDays && attendanceDays.map((day,index) => (
+                            {tableHeaders.slice(8, tableHeaders.length) && tableHeaders.slice(8, tableHeaders.length).map((day,index) => (
                                 <td className='agent-details' key={`${day.replace(/\s/g, '')}${agents.email}`}>
                                     <div  key={`${day.replace(/\s/g, '')} ${index} ${agents.email}`}>
                                         <Tooltip title={getUpdatedBy(agents.attendance[0], day.replace(/\s/g, ''))}>
@@ -192,20 +188,23 @@ const [count,setCount] =useState(0)
                                             disabled={compareDates(agents.doj , getFullDate(attendanceYear, day)) ||
                                                       compareDates(fullDate , getFullDate(attendanceYear, day)) && (!userDetails?.roles.includes('call_center_manager') && !userDetails?.roles.includes('admin')) }
                                             key={`${day.replace(/\s/g, '')}`}
-                                            className='attendance-dropdown'
+                                            className={`attendance-dropdown attendance-dropdown-${transformData(agents.attendance[0])[day.replace(/\s/g, '')]}`}
                                             options={attendanceType}
                                             value={attendanceType.find(value => value.value === transformData(agents.attendance[0])[day.replace(/\s/g, '')])  || isAttendanceSelected(agents.id, day)}
                                             isOptionEqualToValue={(option, value) => option.id === value.id}
                                             getOptionLabel={(option) => option.value || ""}
                                             onChange={changeAttendance(agents.id, day)}
-                                            renderInput={(params) => <TextField {   ...params} label={''}
+                                            renderInput={(params) => <TextField
+                                                                                 InputProps={{
+                                                                                     ...params.InputProps,
+                                                                                     readOnly: true, // Prevents user input
+                                                                                 }} {   ...params}
                                             />}
                                         />
                                         </Tooltip>
                                     </div>
                                 </td>
                             ))}
-
                         </tr>
                     ))}
                 </tbody>

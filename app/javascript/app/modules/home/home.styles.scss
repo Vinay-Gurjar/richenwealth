@@ -5,6 +5,7 @@
 }
 
 .login-component {
+  padding: 3rem;
   margin-left: auto;
   width: 35%;
   margin-top: 5%;
@@ -58,4 +59,12 @@
 
 .otp-input {
   width: 15rem;
+}
+
+.home-page-container {
+  display: flex;
+}
+
+.home-page-des {
+  margin-top: -8rem;
 }

@@ -4,77 +4,105 @@ class Api::UsersController <  Api::ApplicationController
   include UsersHelper
 
   def call_center_users
-    if current_user.has_role?(:admin) || current_user.has_role?(:super_admin)
-    users = User.joins(:roles, :team_leader).where(roles: {name: ['agent', 'team_lead']}).where(call_center_id: params[:cc_id])
-    else
-      users = User.joins(:roles, :team_leader).where(roles: {name: ['agent', 'team_lead']}).where(call_center_id: current_user&.call_center_id)
+    begin
+      if current_user.has_role?(:admin) || current_user.has_role?(:super_admin)
+        users = User.joins(:roles, :team_leader).where(roles: { name: ['agent', 'team_lead'] }).where(call_center_id: params[:cc_id])
+      else
+        users = User.joins(:roles, :team_leader).where(roles: { name: ['agent', 'team_lead'] }).where(call_center_id: current_user&.call_center_id)
+      end
+
+      date = Date.parse(params[:start_date])
+      raise StandardError.new("Date is not present") if date.blank?
+      headers = generate_headers(date)
+      users = users.includes(:attendances)
+                   .select("users.id, users.doj, roles.name as designation, users.name as user_name, users.gender, users.email, team_leaders_users.name as team_leader_name, users.status, users.is_inactive_date")
+      users_with_attendance = users.map do |user|
+        user_data = {
+          id: user.id,
+          doj: user.doj,
+          designation: user.designation,
+          user_name: user.user_name,
+          gender: user.gender,
+          email: user.email,
+          team_leader_name: user.team_leader_name,
+          status: user.status,
+          is_inactive_date: user.is_inactive_date,
+          attendance: [user.get_user_attendance(params[:start_date], user.id)]
+        }
+        user_data
+      end
+      render json: { data: users_with_attendance, message: 'Call Center Employee Details',headers:headers }, status: :ok
+    rescue StandardError => e
+      render json: { success: false, error: "An error occurred: #{e.message}" }
     end
-    users = users.includes(:attendances)
-                 .select("users.id, users.doj, roles.name as designation, users.name as user_name, users.gender, users.email, team_leaders_users.name as team_leader_name, users.status, users.is_inactive_date")
-    users_with_attendance = users.map do |user|
-      user_data = {
-        id: user.id,
-        doj: user.doj,
-        designation: user.designation,
-        user_name: user.user_name,
-        gender: user.gender,
-        email: user.email,
-        team_leader_name: user.team_leader_name,
-        status: user.status,
-        is_inactive_date: user.is_inactive_date,
-        attendance: [user.get_user_attendance(params[:start_date])]
-      }
-      user_data
-    end
-    render json: {data: users_with_attendance,message: 'Call Center Employee Details'}, status: :ok
   end
 
   def update_attendance
-    user = User.find_by(id: params[:user_id])
-    day = params[:day]
-    a_type = params[:a_type]
-    if user.present?
-      a = Attendance.where(user: user,  day: day).first_or_create!
-      a.attendance_type = a_type
-      a.updated_by_id = current_user&.id
-      a.save
-      render json: {message: 'Attendance Updated', status: true}, status: :ok
-    else
-      render json: {message: 'Invalid User', status: true}, status: :ok
+    begin
+      user = User.find_by(id: params[:user_id])
+      day = params[:day]
+      a_type = params[:a_type]
+      if user.present?
+        a = Attendance.where(user: user, day: day).first_or_create!
+        a.attendance_type = a_type
+        a.updated_by_id = current_user&.id
+        a.save
+        render json: { message: 'Attendance Updated', status: true }, status: :ok
+      else
+        render json: { message: 'Invalid User', status: true }, status: :ok
+      end
+    rescue StandardError => e
+      render json: { success: false, error: "An error occurred: #{e.message}" }
     end
   end
 
   def call_center_shifts
-    shifts = ShiftTime.joins(:call_center_shift_mappings).where(call_center_shift_mappings:  {call_center_id: current_user&.call_center&.id})
-    shifts = shifts.sort()
-    render json: {data: shifts}, status: :ok
+    begin
+      shifts = ShiftTime.joins(:call_center_shift_mappings).where(call_center_shift_mappings: { call_center_id: current_user&.call_center&.id })
+      shifts = shifts.sort()
+      render json: { data: shifts }, status: :ok
+    rescue StandardError => e
+      render json: { success: false, error: "An error occurred: #{e.message}" }
+    end
   end
 
   def shift_wise_timing
-    timing = ShiftWiseTime.where(shift_time_id:params[:shift_id]).select(:id, :time)
-    timing = timing.sort()
-    render json: {data: timing}, status: :ok
+    begin
+      timing = ShiftWiseTime.where(shift_time_id: params[:shift_id]).select(:id, :time)
+      timing = timing.sort()
+      render json: { data: timing }, status: :ok
+    rescue StandardError => e
+      render json: { success: false, error: "An error occurred: #{e.message}" }
+    end
   end
 
   def team_leaders_list
-    date = params[:date] ? params[:date] :Date.today
-    team_leaders = User.with_role(:team_lead).where(call_center: current_user.call_center).select(:id,:name)
-    render json: {data: team_leaders, center_details: "Hourly Report #{current_user.call_center&.name} Date:- #{date.strftime("%d %b")}"}, status: :ok
+    begin
+      date = params[:date] ? params[:date] : Date.today
+      team_leaders = User.with_role(:team_lead).where(call_center: current_user.call_center).select(:id, :name)
+      render json: { data: team_leaders, center_details: "Hourly Report #{current_user.call_center&.name} Date:- #{date.strftime("%d %b")}" }, status: :ok
+    rescue StandardError => e
+      render json: { success: false, error: "An error occurred: #{e.message}" }
+    end
   end
 
   def team_leader_agents
-    tl_id = params[:tl_id]
+    begin
+      tl_id = params[:tl_id]
 
-    # Check if the 'tl_id' parameter is provided and not blank
-    if tl_id.blank?
-      raise StandardError.new("Invalid Team Leader ID")
+      # Check if the 'tl_id' parameter is provided and not blank
+      if tl_id.blank?
+        raise StandardError.new("Invalid Team Leader ID")
+      end
+
+      # Find the agents under the specified team leader
+      agents = User.find_by(id: tl_id).agents
+      agents = format_agents(agents)
+      # Render the list of agents and a message in JSON format
+      render json: { data: agents, message: "Team Leader Agents" }, status: :ok
+    rescue StandardError => e
+      render json: { success: false, error: "An error occurred: #{e.message}" }
     end
-
-    # Find the agents under the specified team leader
-    agents = User.find_by(id: tl_id).agents
-    agents = format_agents(agents)
-    # Render the list of agents and a message in JSON format
-    render json: { data: agents, message: "Team Leader Agents" }, status: :ok
   end
 end
 

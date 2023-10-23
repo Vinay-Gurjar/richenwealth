@@ -19,7 +19,7 @@ class User < ApplicationRecord
   has_many :team_member_mappings, foreign_key: 'team_member_id', class_name: 'AgentTeamLeadMapping'
   has_many :team_leader, through: :team_member_mappings, source: :team_leader
 
-  def get_user_attendance(month_date)
+  def get_user_attendance(month_date, user_id)
     start_date = Date.parse(month_date)
     end_date = start_date.end_of_month
     attendances = self.attendances.where(day: start_date..end_date)

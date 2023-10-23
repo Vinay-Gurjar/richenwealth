@@ -15,6 +15,7 @@ Rails.application.routes.draw do
     get 'reports/agents/hourly_report' => 'report#hourly_report'
     get 'reports/agent/all_day_report' => 'report#get_agent_report'
     get 'reports/agents/minimum_calls_connected' => 'report#minimum_calls_connected'
+    get 'reports/team_leader/agents_attendance_report' => 'report#team_lead_wise_agents_left'
     get 'user/call_center/team_leaders' => 'users#team_leaders_list'
     get 'user/call_center/team_leader/agents' => 'users#team_leader_agents'
 

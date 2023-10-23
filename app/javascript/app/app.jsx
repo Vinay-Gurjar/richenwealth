@@ -14,6 +14,7 @@ import BackDrop from "./modules/back-drop/backDrop";
 import FileUpload from "./modules/fileUpload/fileUpload";
 import TlWiseAgentReport from "./modules/tlWiseAgentReport/tlWiseAgentReport";
 import AgentWiseReport from "./modules/agentWiseReport/agentWiseReport";
+import AttendanceDashboard from "./modules/attendanceDashboard/attendanceDashboard";
 
 const IndexRoutes = () => {
     return(
@@ -23,6 +24,7 @@ const IndexRoutes = () => {
                 <Route path="/upload_files" element={<FileUpload />} />
                 <Route path="/hourly_report" element={<TlWiseAgentReport />} />
                 <Route path="/agent_wise_report" element={<AgentWiseReport />} />
+                <Route path="/attendance_dashboard" element={<AttendanceDashboard />} />
             </Routes>
     )
 }
@@ -40,6 +42,7 @@ function App() {
     const [loader, setLoader] = useState(true)
     const [minimumCallsTime, setMinimumCallsTime] = useState();
     const [minimumCallsDate, setMinimumCallsDate] = useState();
+    const userEnteredWrongRoute = !['/', '/minimum_calls_connected' ,'/upload_files', ,'/hourly_report' ,'/agent_wise_report','/attendance_dashboard'].includes(window.location.pathname);
 
     useEffect(() => {
         if (isValuePresent(localStorage.getItem('user_details'))) {
@@ -52,8 +55,14 @@ function App() {
     },[localStorage.getItem('user_details')])
 
     useEffect(() => {
+        if (userEnteredWrongRoute){
+            window.location.href = '/'
+        }
 
-    }, [isLogin || userDetails]);
+
+        console.log(userEnteredWrongRoute)
+
+    }, [userEnteredWrongRoute || userEnteredWrongRoute]);
 
 
     return (

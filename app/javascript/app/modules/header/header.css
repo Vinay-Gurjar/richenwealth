@@ -281,3 +281,15 @@ and (-webkit-min-device-pixel-ratio: 1.5) {
     display: flex;
     gap: 5rem;
 }
+
+.menu-icon {
+    width: 3rem !important;
+    height: 3rem !important;
+    fill: darkblue !important;
+}
+
+.list-icon {
+    width: 1.5rem !important;
+    height: 1.5rem !important;
+    fill: darkblue !important;
+}

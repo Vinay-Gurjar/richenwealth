@@ -1,7 +1,5 @@
 import React, {useState, useEffect, useContext} from 'react'
 import './tlWiseAgentReport.css'
-import Autocomplete from "@mui/material/Autocomplete";
-import {TextField} from "@mui/material";
 import axios from "axios";
 import DatePickerComp from "../datePicker/datePickerComp";
 import {ApiContext} from "../ApiContext";
@@ -105,7 +103,7 @@ const TlWiseAgentReport = ({}) => {
     return (
         <div className='tl-wise-agent-report-container'>
             <div className='tl-table-headers'>
-                <div className='tl-report-header'>
+                <div className='tl-report-header dotted-boarder '>
                       <span>
                          {`${callCenterName}`}
                       </span>
@@ -140,7 +138,7 @@ const TlWiseAgentReport = ({}) => {
                         <tr>
                             {reportSubHeader &&
                                 reportSubHeader.map((subHeader, index) => (
-                                    <th className='tl-table-sub-header' key={index}>
+                                    <th className='tl-table-sub-header dotted-boarder ' key={index}>
                                         {subHeader.split(' ').map((word, wordIndex) => (
                                             <div key={wordIndex}>{word}</div>
                                         ))}
@@ -151,8 +149,10 @@ const TlWiseAgentReport = ({}) => {
                         <tbody>
                         {tableData && tableData.map((tableItem) => (
                               <tr>
-                                  {tableItem && tableItem.map((item) => (
-                                          <td>
+                                  {tableItem && tableItem.map((item, itemIndex) => (
+                                          <td class={`dotted-boarder hourly-report-value-${itemIndex > 6 ? item > 54 ? 'green-fc' : item < 40 ? 'red-fc' : '' : ''}
+                                            hourly-report-value-${itemIndex === 6 ? parseFloat(item) < 30 ? 'red-bg' : '' : ''}
+                                               hourly-report-value-${itemIndex === 11 ? parseFloat(item) < 35 ? 'red-fc' : '' : ''}` }>
                                               {item}
                                           </td>
                                   ))}

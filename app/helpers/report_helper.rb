@@ -154,6 +154,14 @@ module ReportHelper
     end
   end
 
+  def make_agent_left_header(shift_id)
+    initial_header = ['Team Leader','Present','Absent','Half Day','OGT']
+    shift_times = ShiftTime.find_by(id: shift_id).shift_wise_times
+    shift_times.each do |st|
+      initial_header << st.time
+    end
+    initial_header
+  end
 
   def make_report_format(all_day_reports)
     formatted_data = []
@@ -183,6 +191,68 @@ module ReportHelper
       day_report.calls_completed || 0,
       get_percent(day_report.calls_attempted || 0 || 0, day_report.calls_completed || 0),
     ]
+  end
+
+
+  def generate_tl_specific_attendance_report(cc_team_leaders, date)
+    formatted_data = []
+    unless cc_team_leaders.blank?
+      cc_team_leaders.each_with_index do |tl|
+        data  = [
+          tl.name,
+          generate_tl_attendance_report(tl.agents, date),
+          generate_hourly_working_agents(tl, date)
+        ]
+        formatted_data <<  data.flatten(3)
+      end
+    end
+    formatted_data
+  end
+
+  def generate_tl_attendance_report(agents,date)
+    p = 0
+    a = 0
+    hd = 0
+    ogt = 0
+    if agents.present?
+      agents.each do |agent|
+        att = Attendance.where(users: agent.id, day: date).first
+        p += 1 if att&.attendance_type === 'P'
+        a += 1 if att&.attendance_type === 'A'
+        hd += 1 if att&.attendance_type === '1/2P'
+        ogt += 1 if att&.attendance_type === 'OGT'
+      end
+    end
+      [p, a, hd, ogt]
+  end
+
+  def generate_hourly_working_agents(tl,date)
+    sw_time =  tl.shift_time.shift_wise_times
+    s_w_data = []
+    pre_hr_ids = []
+    sw_time.each do |st|
+      present_report = HourlyReport.where(report_time_id: st,date: date).where.not(calls_attempted:0).where.not(user_id: pre_hr_ids)
+      absent_report = HourlyReport.where(report_time_id: st,date: date).where(calls_attempted:0).where(user_id: pre_hr_ids)
+      pre_hr_ids = present_report.pluck(:user_id)
+      s_w_data << format_left_join_details(present_report.count, absent_report.count)
+    end
+    s_w_data
+  end
+
+  def format_left_join_details(present, absent)
+    format = '0'
+    if present > 0 && absent > 0
+      if absent > present
+        format = "-#{absent}/#{present}"
+      else
+        format = "#{present}/-#{absent}"
+      end
+    elsif present > 0 && absent == 0
+      format = "#{present}"
+    elsif absent > 0 && present == 0
+      format = "-#{absent}"
+    end
+    format
   end
 
 end
