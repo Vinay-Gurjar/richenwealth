@@ -58,7 +58,9 @@ class Api::UsersController <  Api::ApplicationController
 
   def call_center_shifts
     begin
-      shifts = ShiftTime.joins(:call_center_shift_mappings).where(call_center_shift_mappings: { call_center_id: current_user&.call_center&.id })
+      cc_id  = params[:cc_id]
+      query = cc_id.present? ? cc_id: current_user&.call_center&.id
+      shifts = ShiftTime.joins(:call_center_shift_mappings).where(call_center_shift_mappings: { call_center_id: query })
       shifts = shifts.sort()
       render json: { data: shifts }, status: :ok
     rescue StandardError => e
@@ -100,6 +102,59 @@ class Api::UsersController <  Api::ApplicationController
       agents = format_agents(agents)
       # Render the list of agents and a message in JSON format
       render json: { data: agents, message: "Team Leader Agents" }, status: :ok
+    rescue StandardError => e
+      render json: { success: false, error: "An error occurred: #{e.message}" }
+    end
+  end
+
+  def get_states
+    begin
+      states = State.order(:name).select(:id, :name)
+      render json: { data: states, message: "State List" }, status: :ok
+    rescue StandardError => e
+      render json: { success: false, error: "An error occurred: #{e.message}" }
+    end
+  end
+
+  def get_call_centers
+    begin
+      state_id = params[:state_id].present? ? params[:state_id] : current_user.call_center.state_id
+      cc = CallCenter.where(state_id: state_id).select(:id, :name)
+      render json: { data: cc, message: "Call Center's List" }, status: :ok
+    rescue StandardError => e
+      render json: { success: false, error: "An error occurred: #{e.message}" }
+    end
+  end
+
+  def get_shifts
+    begin
+      shifts = ShiftTime.select(:id, :name, :time)
+      render json: { data: shifts, message: "Shifts List" }, status: :ok
+    rescue StandardError => e
+      render json: { success: false, error: "An error occurred: #{e.message}" }
+    end
+  end
+
+  def create_user
+    begin
+      is_new_cc = params[:is_new_cc]
+      state_id = params[:state_id].present? ? params[:state_id] : current_user.call_center&.state_id
+      user = User.new
+      user.name = params[:name]
+      user.phone_number = params[:phone_number]
+      user.email = params[:email]
+      user.gender = params[:gender]
+      user.doj = params[:doj]
+      user.shift_time_id = params[:shift_time_id]
+      user.call_center_id = params[:cc_id]
+      if is_new_cc == 'true'
+        cc = CallCenter.where(name: params[:cc_name], state_id: state_id).first_or_create!
+        CallCenterShiftMapping.where(call_center: cc, shift_time_id: params[:shift_time_id])
+        user.call_center = cc
+      end
+      user.add_role(params[:role].to_sym)
+      user.save
+      render json: { data: user, message: "User successfully created" }, status: :ok
     rescue StandardError => e
       render json: { success: false, error: "An error occurred: #{e.message}" }
     end

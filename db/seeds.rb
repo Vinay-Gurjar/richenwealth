@@ -49,8 +49,14 @@ full_day_time_arr.each_with_index do |t, i|
   s.save
 end
 
-State.create(name: "Delhi", state_code:"DL")
-CallCenter.create(name: "Delhi_1", state: State.first)
+state_names = ["Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jammu and Kashmir", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttarakhand", "Uttar Pradesh", "West Bengal", "Delhi", "Puducherry", "Dadra Nagar Haveli & Daman-Diu", "Andaman and Nicobar Islands", "Chandigarh", "Lakshadweep", "Ladakh"]
+state_names.each do |state|
+  st = State.where(name: state).first_or_create!
+  CallCenter.create(name: "#{st.name.sub(/\s/, '_')}_1", state: st)
+end
+
+
+
 User.destroy_all
 sa = User.create(name: "Super Admin 1", email: "super.admin@saral.tracker", password: "123456",
                  phone_number: "9999223772", call_center: CallCenter.first, shift_time: ShiftTime.first)

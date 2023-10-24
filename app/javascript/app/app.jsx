@@ -15,6 +15,7 @@ import FileUpload from "./modules/fileUpload/fileUpload";
 import TlWiseAgentReport from "./modules/tlWiseAgentReport/tlWiseAgentReport";
 import AgentWiseReport from "./modules/agentWiseReport/agentWiseReport";
 import AttendanceDashboard from "./modules/attendanceDashboard/attendanceDashboard";
+import Admin from "./modules/admin/admin";
 
 const IndexRoutes = () => {
     return(
@@ -25,6 +26,7 @@ const IndexRoutes = () => {
                 <Route path="/hourly_report" element={<TlWiseAgentReport />} />
                 <Route path="/agent_wise_report" element={<AgentWiseReport />} />
                 <Route path="/attendance_dashboard" element={<AttendanceDashboard />} />
+                <Route path="/sup_admin" element={<Admin />} />
             </Routes>
     )
 }
@@ -42,7 +44,7 @@ function App() {
     const [loader, setLoader] = useState(true)
     const [minimumCallsTime, setMinimumCallsTime] = useState();
     const [minimumCallsDate, setMinimumCallsDate] = useState();
-    const userEnteredWrongRoute = !['/', '/minimum_calls_connected' ,'/upload_files', ,'/hourly_report' ,'/agent_wise_report','/attendance_dashboard'].includes(window.location.pathname);
+    const userEnteredWrongRoute = !['/','/sup_admin', '/minimum_calls_connected' ,'/upload_files', ,'/hourly_report' ,'/agent_wise_report','/attendance_dashboard'].includes(window.location.pathname);
 
     useEffect(() => {
         if (isValuePresent(localStorage.getItem('user_details'))) {

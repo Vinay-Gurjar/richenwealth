@@ -17,21 +17,20 @@ import DatePickerComp from "../datePicker/datePickerComp";
 
 
 const FileUpload = ({}) => {
-    const {callCenterShift, timeList} = useContext(ApiContext)
+    const {timeList, userDetails} = useContext(ApiContext)
     const [csvFile, setCsvFile] = useState()
     const [fileType, setFileType] = useState()
     const [selectedTime, setSelectedTime] = useState()
     const [uploadFileType, setUploadFileType] = useState('')
-    const [reportDateTime, setReportDateTime] = useState('')
     const [date, setDate] = useState()
     const [invalidUsers, setInvalidUsers] = useState()
+    const [uploadFileTypes, setUploadFileTypes] = useState(['Report Upload'])
 
     const config = {
         headers: {
             'Authorization': `${JSON.parse(localStorage.getItem('user_details')).auth_token}`,
         }
     }
-     const uploadFileTypes = ['User Upload', 'Report Upload']
 
     const VisuallyHiddenInput = styled('input')({
         clip: 'rect(0 0 0 0)',
@@ -79,10 +78,16 @@ const FileUpload = ({}) => {
         setDate(date)
     }
 
+
+    useEffect(() => {
+       if (userDetails?.roles.includes('call_center_manager') || userDetails?.roles.includes('admin')) {
+           setUploadFileTypes([...uploadFileTypes, 'User Upload'])
+       }
+    },[userDetails])
+
     const invalidUsersData = (users) => {
         setInvalidUsers(users)
     }
-    console.log(isValuePresent(invalidUsers))
     return (
         <div className='upload-file-container align-center' >
             <div className='file-type-containe align-center'>
