@@ -5,9 +5,10 @@ import { MuiOtpInput } from 'mui-one-time-password-input'
 import {isValuePresent} from "../../utils";
 import {ApiContext} from "../ApiContext";
 import BackDrop from "../back-drop/backDrop";
+import HomePageBg from '../../../../assets/images/HomePageDesign.svg'
 const HomeComponent = () => {
-    const {setIsLogin} = useContext(ApiContext)
-    const [phoneNumber, setPhoneNumber] = useState()
+    const {setIsLogin,setUserDetails} = useContext(ApiContext)
+    const [phoneNumber, setPhoneNumber] = useState('')
     const [identification_token, setIdentification_token] = useState()
     const [sendOtpStatus, setsendOtpStatus] = useState()
     const [otp, setOtp] = React.useState('')
@@ -52,9 +53,10 @@ const HomeComponent = () => {
         formData.append('otp', otp);
         return axios.post('/api/auth/user/submit_otp', formData)
             .then((response) => {
-                localStorage.setItem('auth_token', response.data.json.data.auth_token)
-                setIsLogin(response.data.json.status)
-                setLoader(response.data.json.status)
+                localStorage.setItem('user_details', JSON.stringify(response.data.data))
+                setUserDetails(response.data.data)
+                setIsLogin(response.data.data.status)
+                setLoader(response.data.data.status)
                 setLoaderFalse()
                 return response.data;
 
@@ -79,8 +81,9 @@ const HomeComponent = () => {
     }
 
     return (
-        <>
+        <div className="home-page-container">
             <BackDrop toggle={loader}/>
+            <HomePageBg className="home-page-des" />
             <div className="login-component" >
                 <div className="login-heaging">
                     <h3 className='login-main-heading'>Welcome!</h3>
@@ -112,7 +115,7 @@ const HomeComponent = () => {
 
                 </div>
             </div>
-        </>
+        </div>
     );
 }
 

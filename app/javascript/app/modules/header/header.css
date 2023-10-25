@@ -276,3 +276,20 @@ and (-webkit-min-device-pixel-ratio: 1.5) {
 .MuiToolbar-regular {
     min-height: 75px !important;
 }
+
+.attendance-dropdowns {
+    display: flex;
+    gap: 5rem;
+}
+
+.menu-icon {
+    width: 3rem !important;
+    height: 3rem !important;
+    fill: darkblue !important;
+}
+
+.list-icon {
+    width: 1.5rem !important;
+    height: 1.5rem !important;
+    fill: darkblue !important;
+}

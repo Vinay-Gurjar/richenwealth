@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -7,17 +7,30 @@ import './fileUpload.css'
 import Autocomplete from "@mui/material/Autocomplete";
 import {TextField} from "@mui/material";
 import axios from "axios";
-import AutoCompleteDropdown from "../autoCompleteDropdown/autoCompleteDropdown";
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import {ApiContext} from "../ApiContext";
+import {isValuePresent} from "../../utils";
+import DatePickerComp from "../datePicker/datePickerComp";
+
 
 const FileUpload = ({}) => {
-
+    const {timeList, userDetails} = useContext(ApiContext)
     const [csvFile, setCsvFile] = useState()
-    const [selectedTime, setSelectedTimer] = useState()
+    const [fileType, setFileType] = useState()
+    const [selectedTime, setSelectedTime] = useState()
     const [uploadFileType, setUploadFileType] = useState('')
+    const [date, setDate] = useState()
+    const [invalidUsers, setInvalidUsers] = useState()
+    const [uploadFileTypes, setUploadFileTypes] = useState(['Report Upload'])
 
-
-    const timesArray = ['7:00 AM', '8:00 AM', '9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM', '6:00 PM', '7:00 PM', '8:00 PM'];
-    const uploadFileTypes = ['User Upload', 'Report Upload']
+    const config = {
+        headers: {
+            'Authorization': `${JSON.parse(localStorage.getItem('user_details')).auth_token}`,
+        }
+    }
 
     const VisuallyHiddenInput = styled('input')({
         clip: 'rect(0 0 0 0)',
@@ -32,10 +45,10 @@ const FileUpload = ({}) => {
     });
 
     const selectTime = (event, value) => {
-        setSelectedTimer(value)
+        setSelectedTime(value.id)
     }
-    const handleFileUpload = (event) => {
-        console.log(event.target.files[0])
+    const handleFileUpload = (type) => (event) => {
+        setFileType(type)
         setCsvFile(event.target.files[0])
     }
 
@@ -43,123 +56,43 @@ const FileUpload = ({}) => {
         setUploadFileType(value)
     }
 
-    // const handlePostRequest = () => {
-    //     debugger
-    //     const postData = {
-    //         csv_file: csvFile
-    //     };
-    //
-    //     fetch('http://localhost:3000/api/users/import_users', {
-    //         method: 'POST',
-    //
-    //         body: JSON.stringify(postData),
-    //     })
-    //         .then((response) => {
-    //             if (!response.ok) {
-    //                 throw new Error('Network response was not ok');
-    //             }
-    //             return response.json();
-    //         })
-    //         .then((data) => {
-    //             console.log('POST request successful:', data);
-    //         })
-    //         .catch((error) => {
-    //             console.error('Error:', error);
-    //         });
-    // };
-
-
-    const handlePostRequest = async () => {
-        try {
-            const formData = new FormData();
-            formData.append('csv_file', csvFile);
-
-            const response = await fetch('http://localhost:3000/api/users/import_users', {
-                method: 'POST',
-                body: formData,
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                console.log('CSV file uploaded and processed:', data);
-            } else {
-                console.error('Failed to upload CSV file.');
-            }
-        } catch (error) {
-            console.error('An error occurred:', error);
-        }
-    };
-
-const [ jti, setJti] = useState()
-    const login = async () => {
-        try {
-            const formData = new FormData();
-            formData.append('phone_number', '9999223772');
-
-            const response = await fetch('http://localhost:3000/api/auth/user/login', {
-                method: 'POST',
-                body: formData,
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                setJti(data.data.identification_token)
-                console.log('CSV file uploaded and processed:', data);
-            } else {
-                console.error('Failed to upload CSV file.');
-            }
-        } catch (error) {
-            console.error('An error occurred:', error);
-        }
-    }
-
-    const makePostRequest = () => {
-        const apiUrl = '/api/auth/user/login'
+    const importFile = () => {
         const formData = new FormData();
-        formData.append('phone_number', '9999223772');
-        return axios.post(apiUrl, formData)
+        formData.append('csv_file', csvFile);
+        formData.append('file_type', fileType);
+        formData.append('date', date);
+        formData.append('rt_id', selectedTime);
+        return axios.post('/api/users/import_file', formData,config)
             .then((response) => {
-                // Handle the successful response here
-                console.log('Response Data:', response.data);
-                return response.data; // You can return the data or do something else with it
+                if (isValuePresent(response.data.not_created_entry)) {
+                    invalidUsersData(response.data.not_created_entry)
+                }
             })
             .catch((error) => {
-                // Handle any errors here
                 console.error('Error:', error);
-                throw error; // You can throw the error or handle it in your component
+                throw error;
             });
     };
 
-    const submit = async () => {
-        try {
-            const formData = new FormData();
-            formData.append('identification_token', jti);
-            formData.append('otp', 123456);
-
-            const response = await fetch('http://localhost:3000/api/auth/user/submit_otp', {
-                method: 'POST',
-                body: formData,
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                console.log('CSV file uploaded and processed:', data);
-            } else {
-                console.error('Failed to upload CSV file.');
-            }
-        } catch (error) {
-            console.error('An error occurred:', error);
-        }
-    };
+    const setReportDate = (date) => {
+        setDate(date)
+    }
 
 
+    useEffect(() => {
+       if (userDetails?.roles.includes('call_center_manager') || userDetails?.roles.includes('admin')) {
+           setUploadFileTypes([...uploadFileTypes, 'User Upload'])
+       }
+    },[userDetails])
+
+    const invalidUsersData = (users) => {
+        setInvalidUsers(users)
+    }
     return (
         <div className='upload-file-container align-center' >
-            <h1 onClick={makePostRequest}>login</h1>
-            <h1 onClick={submit}>submit</h1>
             <div className='file-type-containe align-center'>
                 <Autocomplete
-                    className='team-leaders-dropdown'
+                    className='reporting-type'
                     disablePortal
                     id="combo-box-demo"
                     value={uploadFileType}
@@ -169,16 +102,11 @@ const [ jti, setJti] = useState()
                     renderInput={(params) => <TextField {...params} label={'Reporting Type'}/>}
                 />
             </div>
-
             {uploadFileType && uploadFileType === 'User Upload' ?
             <div className='upload-btn-container align-center' >
                 <Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
-                    Upload Team Leaders
-                    <VisuallyHiddenInput accept=".csv" onChange={handleFileUpload}  type="file" />
-                </Button>
-                <Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
-                    Upload Agents
-                    <VisuallyHiddenInput accept=".csv" onChange={handleFileUpload}  type="file" />
+                    Upload Users
+                    <VisuallyHiddenInput accept=".csv" onChange={handleFileUpload('users')}  type="file" />
                 </Button>
             </div>
                 : ''}
@@ -186,33 +114,36 @@ const [ jti, setJti] = useState()
                 <div className='upload-btn-container align-center' >
                 <Button component="label"  variant="contained" startIcon={<CloudUploadIcon />}>
                     Upload APR
-                    <VisuallyHiddenInput accept=".csv" onChange={handleFileUpload}  type="file" />
+                    <VisuallyHiddenInput accept=".csv" onChange={handleFileUpload('apr')}  type="file" />
                 </Button>
+                    <DatePickerComp reportDate={setReportDate} />
                 <div>
                     <Autocomplete
                         className='team-leaders-dropdown'
-                        disablePortal
                         id="combo-box-demo"
-                        value={selectedTime}
+                        options={timeList}
+                        value={timeList.find(value => value.id === selectedTime) || null}
+                        isOptionEqualToValue={(option, value) => option.id === value.id}
+                        getOptionLabel={(option) => option.time || ""}
                         onChange={selectTime}
-                        options={timesArray.map(data => data)}
                         blurOnSelect={true}
-                        renderInput={(params) => <TextField {...params} label={'Report Time'}/>}
+                        renderInput={(params) => <TextField {...params} label={'Report Time'}
+                        />}
                     />
                 </div>
-                {/*<AutoCompleteDropdown listArray={} onChangeValue={} selectedValue={} />*/}
                 </div>
                 : ''
             }
             {csvFile &&
                 <>
-                    <Button onClick={handlePostRequest} className='submit-upload '>
-                        { uploadFileType === 'User Upload' ? 'Create Users' : 'Upload File' }
+                    <Button onClick={importFile} className='submit-upload '>
+                        {uploadFileType === 'User Upload' ? 'Create Users' : 'Upload File'}
                     </Button>
-
-                    <div className='upload-csv-view'>
-                        {/*<ShowCsvData csvFile={csvFile} />*/}
-                    </div>
+                    {fileType === 'users' || isValuePresent(invalidUsers) ?
+                        <div className='upload-csv-view'>
+                            <ShowCsvData csvFile={csvFile} invaliUsers={invalidUsers}/>
+                        </div> : ''
+                    }
                 </>
             }
         </div>

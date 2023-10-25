@@ -46,6 +46,23 @@
     width: 10rem;
     border: none;
 }
+
 .team-leaders-dropdown .MuiOutlinedInput-notchedOutline {
     border: none !important;
+}
+
+.dotted-boarder {
+ border: 1px dotted black ;
+}
+
+.hourly-report-value-red-fc {
+    color: red !important;
+}
+
+.hourly-report-value-red-bg {
+    background: red !important;
+}
+
+.hourly-report-value-green-fc {
+    color: #57bb8a !important;
 }

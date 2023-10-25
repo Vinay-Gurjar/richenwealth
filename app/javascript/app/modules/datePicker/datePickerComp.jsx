@@ -4,12 +4,8 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import dateFormat from "dateformat";
-import dayjs from "dayjs";
-import moment from "moment";
-import {getTodayDate} from '../../utils'
-
-const DatePickerComp = ({reportDate}) => {
+import './datePickerComp.css'
+const DatePickerComp = ({reportDate, borderNone}) => {
 
     const [date, setDate] =useState();
     const handleDateChange=(event)=>{
@@ -17,18 +13,15 @@ const DatePickerComp = ({reportDate}) => {
         reportDate(event.$d)
     }
 
-    // const maximumDate = dayjs(getTodayDate(), 'DD-MM-YYYY');
-    // const minimumDate = dayjs(minDate, 'DD-MM-YYYY');
-
 
     return (
-        <div>
+        <div style={{width: '15rem'}}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DemoContainer components={['DatePicker']}>
                     <DatePicker
                         label={'Date'}
                         onChange={handleDateChange}
-                        className='report-date-picker-container'
+                        className={`report-date-picker-container-${borderNone}`}
                         value={date}
                         slotProps={{
                             textField: {

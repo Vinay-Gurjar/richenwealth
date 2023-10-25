@@ -4,7 +4,6 @@ class CreateCallCenters < ActiveRecord::Migration[7.0]
       t.string :name
       t.references :state, null: false, foreign_key: true
       t.references :location_type, polymorphic: true, null: false
-
       t.timestamps
     end
   end
