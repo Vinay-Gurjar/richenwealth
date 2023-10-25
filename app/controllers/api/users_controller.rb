@@ -128,7 +128,8 @@ class Api::UsersController <  Api::ApplicationController
 
   def get_shifts
     begin
-      shifts = ShiftTime.select(:id, :name, :time)
+      cc_id = params[:cc_id].present? ? params[:cc_id] : current_user.call_center.id
+      shifts = CallCenterShiftMapping.joins(:shift_time).where(call_center_id:cc_id).select("shift_times.id", "shift_times.name", "shift_times.time").as_json
       render json: { data: shifts, message: "Shifts List" }, status: :ok
     rescue StandardError => e
       render json: { success: false, error: "An error occurred: #{e.message}" }
@@ -147,13 +148,14 @@ class Api::UsersController <  Api::ApplicationController
       user.doj = params[:doj]
       user.shift_time_id = params[:shift_time_id]
       user.call_center_id = params[:cc_id]
+
       if is_new_cc == 'true'
         cc = CallCenter.where(name: params[:cc_name], state_id: state_id).first_or_create!
         CallCenterShiftMapping.where(call_center: cc, shift_time_id: params[:shift_time_id])
         user.call_center = cc
       end
+      user.save!
       user.add_role(params[:role].to_sym)
-      user.save
       render json: { data: user, message: "User successfully created" }, status: :ok
     rescue StandardError => e
       render json: { success: false, error: "An error occurred: #{e.message}" }

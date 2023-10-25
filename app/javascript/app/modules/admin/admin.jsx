@@ -65,9 +65,11 @@ const Admin = () => {
             });
     }
 
-    const callCenterShifts = () => {
+    const callCenterShifts = (ccId) => {
         return axios.get('/api/user/call_center/all_shifts', {
-            params: {},
+            params: {
+                cc_id:ccId
+            },
             headers: {
                 'Authorization': `${JSON.parse(localStorage.getItem('user_details')).auth_token}`,
             }
@@ -99,6 +101,7 @@ const Admin = () => {
 
     const changeCcId = (event) => {
         setCcId(event.id)
+        callCenterShifts(event.id)
     }
 
 
@@ -122,12 +125,6 @@ const Admin = () => {
         let value = event.target.value
         if (type === 'Phone Number') {
             value = handlePhoneNumber(event)
-        }
-        if (type === 'DOJ') {
-            value = handleDateOfBirth(event)
-        }
-        if (type === 'Email') {
-            value = handleEmail(event)
         }
 
         jsonForm[type.toLowerCase().replace(/\s+/g, '_')] = value
@@ -166,34 +163,10 @@ const Admin = () => {
         return event.target.value
     }
 
-    const handleDateOfBirth = (event) => {
-        const dob = event.target.value.replace(/[^0-9/]/g, ''); // Remove non-numeric and non-slash characters
-        if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dob)) {
-            event.target.value = dob;
-        } else {
-            event.target.value = ''; // Clear the input value if it doesn't match a valid date format (dd/mm/yyyy)
-        }
-        return event.target.value;
-    };
-
-    const handleEmail = (event) => {
-        const email = event.target.value;
-        const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
-
-        if (emailRegex.test(email)) {
-            event.target.value = email;
-        } else {
-            event.target.value = ''; // Clear the input value if it doesn't match a valid email format
-        }
-        return event.target.value;
-    };
-
 
     const submit = () => {
-        console.log(jsonForm)
-        // createUser()
+        createUser()
     }
-    console.log('okay')
     return (
 
         <div className="create-call-center">
@@ -221,23 +194,27 @@ const Admin = () => {
                             borderNone={'true'}
                             width={'15rem'}
                         />
-                        <Button onClick={createNewCc}>New Call Center</Button>
                     </>
+                }
+                <AutoCompleteDropdown
+                    listArray={shiftTimeList}
+                    name={'Call Center Shift'}
+                    onChangeValue={changeCcShiftId}
+                    selectedValue={ccShiftId}
+                    compareValue={'name'}
+                    borderNone={'true'}
+                    width={'20rem'}
+                />
+
+                {!isNewCc &&
+                    <Button onClick={createNewCc}>New Call Center</Button>
                 }
 
                 {
                     isNewCc &&
                     <>
-                        <AutoCompleteDropdown
-                            listArray={shiftTimeList}
-                            name={'Call Center Shift'}
-                            onChangeValue={changeCcShiftId}
-                            selectedValue={ccShiftId}
-                            compareValue={'name'}
-                            borderNone={'true'}
-                            width={'20rem'}
-                        />
                         <TextField
+                            style={{width: '15rem'}}
                             id="outlined-basic"
                             label={'Call Center Name'}
                             fullWidth
@@ -286,7 +263,7 @@ const Admin = () => {
                 {userField && userField.map((field) => (
                     <TextField
                         id="outlined-basic"
-                        label={field === 'DOJ' ? `${field} DD/MM/YY` : field}
+                        label={field === 'DOJ' ? `${field} DD/MM/YYYY` : field}
                         variant="outlined"
                         required={true}
                         value={shortText}
