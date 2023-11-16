@@ -5,7 +5,8 @@ import { MuiOtpInput } from 'mui-one-time-password-input'
 import {isValuePresent} from "../../utils";
 import {ApiContext} from "../ApiContext";
 import BackDrop from "../back-drop/backDrop";
-import HomePageBg from '../../../../assets/images/HomePageDesign.svg'
+import HomePageBg from '../../../../assets/images/HomePageDesign.svg';
+
 const HomeComponent = () => {
     const {setIsLogin,setUserDetails} = useContext(ApiContext)
     const [phoneNumber, setPhoneNumber] = useState('')

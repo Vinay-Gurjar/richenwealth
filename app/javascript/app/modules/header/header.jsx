@@ -29,7 +29,7 @@ import { faUsers,
 const HeaderBar = ({}) => {
     const {userDetails,minimumCallsTime, setMinimumCallsTime,
         callCenterShift, timeList, setTimeList, setCallCenterShift,
-        setAttendanceYear, setAttendanceMonth, setAttendanceDays, setMinimumCallsDate} = useContext(ApiContext)
+        setAttendanceYear, setAttendanceMonth, setAttendanceDays, setMinimumCallsDate, isLogin} = useContext(ApiContext)
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
     const [ccTiming, setCcTiming] = useState([]);
@@ -150,10 +150,12 @@ const HeaderBar = ({}) => {
 
 
     const toggleDrawer = (anchor, open) => (event) => {
-        if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-            return;
+        if (isLogin) {
+              if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+                return;
+            }
+            setState({ ...state, [anchor]: open });
         }
-        setState({ ...state, [anchor]: open });
     };
 
     const componentsRoute = [

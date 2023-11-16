@@ -110,7 +110,7 @@ const TlWiseAgentReport = ({}) => {
                     <AutoCompleteDropdown
                         listArray={teamLeaders}
                         name={'Team Leader'}
-                        onChangeValue={selectTeamLeader}
+              head          onChangeValue={selectTeamLeader}
                         selectedValue={selectedTeamLeader}
                         compareValue={'name'}
                         width={'15rem'}
