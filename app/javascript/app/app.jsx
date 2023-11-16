@@ -5,7 +5,7 @@ import {ApiContext} from "./modules/ApiContext";
 
 import './app.scss';
 import {Navigate} from "react-router";
-import HomeComponent from "./modules/home/homeComponent";
+import HomeComponent from "./modules/home/home.component";
 import HeaderBar from "./modules/header/header";
 import Attendance from "./modules/attendace/attendance";
 import MinimumCallConnected from "./modules/minimumCallConnected/minimumCallConnected";
