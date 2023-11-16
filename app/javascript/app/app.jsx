@@ -80,7 +80,7 @@ function App() {
                     <BackDrop toggle={loader}/> :
                 isLogin ? <IndexRoutes /> :
                     <Routes>
-                        <IndexRoutes />
+                        <Route path='/' element={<HomeComponent/>}/>
                     </Routes>
                 }
             </ApiContext.Provider>
