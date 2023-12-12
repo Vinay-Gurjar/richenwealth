@@ -55,9 +55,11 @@ const HomeComponent = () => {
         return axios.post('/api/auth/user/submit_otp', formData)
             .then((response) => {
                 localStorage.setItem('user_details', JSON.stringify(response.data.data))
+                localStorage.setItem('auth_token', response.data.data.auth_token)
                 setUserDetails(response.data.data)
-                setIsLogin(response.data.data.status)
-                setLoader(response.data.data.status)
+                console.log(response.data, 'response.data.data.status')
+                setIsLogin(response.data.status)
+                setLoader(response.data.status)
                 setLoaderFalse()
                 return response.data;
 

@@ -9,7 +9,7 @@ import Backdrop from "../back-drop/backDrop";
 import Tooltip from '@mui/material/Tooltip';
 
 const Attendance = ({}) => {
-    const {userDetails,attendanceYear, attendanceMonth, attendanceDays} = useContext(ApiContext)
+    const {userDetails,attendanceYear, attendanceMonth, attendanceDays,config} = useContext(ApiContext)
     const [selectedMonth, setSelectedMonth] =useState(new Date());
     const [selectedDate,setSelectedDate] =useState([])
     const [ccEmployees, setCcEmployees] =useState([])
@@ -21,12 +21,6 @@ const Attendance = ({}) => {
     const [tableHeaders, setTableHeaders] = useState([])
     const fullDate = `${currentYear}-${currentMonth.toString().padStart(2, '0')}-${currentDay.toString().padStart(2, '0')}`;
 
-    const config = {
-        headers: {
-            'Authorization': `${JSON.parse(localStorage.getItem('user_details')).auth_token}`,
-            'Content-Type': 'application/json'
-        }
-    }
 
 const [count,setCount] =useState(0)
     const getCcEmployee = () => {
