@@ -65,20 +65,6 @@ function App() {
         }
     }
 
-    const bubbleSort = () => {
-        const arr = [1, 4, 2, 5, 78, 9, 0, 6];
-        const sa = [...arr];
-        const n = sa.length;
-        for (let i = 0; i < n - 1; i++) {
-            for (let j = 0; j < n - i - 1; j++) {
-                if (sa[j] > sa[j + 1]) {
-                    [sa[j], sa[j + 1]] = [sa[j + 1], sa[j]];
-                }
-            }
-        }
-
-        console.log(sa);
-    };
 
 
     useEffect(() => {
