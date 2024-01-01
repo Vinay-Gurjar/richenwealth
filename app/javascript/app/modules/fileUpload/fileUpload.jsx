@@ -28,7 +28,7 @@ const FileUpload = ({}) => {
 
     const config = {
         headers: {
-            'Authorization': `${JSON.parse(localStorage.getItem('user_details')).auth_token}`,
+            'Authorization': localStorage.getItem('auth_token'),
         }
     }
 

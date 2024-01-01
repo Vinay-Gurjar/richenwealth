@@ -9,7 +9,7 @@ import {isValuePresent} from "../../utils";
 
 
 const TlWiseAgentReport = ({}) => {
-    const {timeList} = useContext(ApiContext)
+    const {timeList, config} = useContext(ApiContext)
     const [selectedTeamLeader, setSelectedTeamLeader] = useState()
     const [callCenterName, setCallCenterName] = useState('')
     const [agentOnCall, setAgentOnCall] = useState(0)
@@ -19,11 +19,6 @@ const TlWiseAgentReport = ({}) => {
     const [reportSubHeader, setReportSubHeader] = useState([])
     const [tableData, setTableData] = useState([])
     const [teamLeaders, setTeamLeaders] =useState([])
-    const config = {
-        headers: {
-            'Authorization': `${JSON.parse(localStorage.getItem('user_details')).auth_token}`,
-        }
-    }
 
     const getTeamLeaders = () => {
         return axios.get('/api/user/call_center/team_leaders', {
