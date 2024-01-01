@@ -13,7 +13,7 @@ import FormLabel from '@mui/material/FormLabel';
 import {ApiContext} from "../ApiContext";
 
 const Admin = () => {
-    const {userDetails} = useContext(ApiContext)
+    const {userDetails, config} = useContext(ApiContext)
     const [stateList, setStateList] = useState([])
     const [stateId, setStateId] = useState()
     const [callCenterList, setCallCenterList] = useState([])
@@ -25,11 +25,7 @@ const Admin = () => {
     const [isNewCc, setIsNewCc] = useState(false)
     const [ccName, setCcName] = useState()
     const [role, setRole] = React.useState();
-    const config = {
-        headers: {
-            'Authorization': `${JSON.parse(localStorage.getItem('user_details')).auth_token}`,
-        }
-    }
+
 
     const getStates = () => {
         return axios.get('/api/user/call_center/states_list', {

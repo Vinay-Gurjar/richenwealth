@@ -2,7 +2,7 @@ import React, {useState, useContext} from 'react';
 import './home.styles.scss'
 import axios from "axios";
 import { MuiOtpInput } from 'mui-one-time-password-input'
-import {isValuePresent} from "../../utils";
+import {isValuePresent, showErrorToast, showSuccessToast} from "../../utils";
 import {ApiContext} from "../ApiContext";
 import BackDrop from "../back-drop/backDrop";
 import HomePageBg from '../../../../../public/images/HomePageDesign.svg';
@@ -28,45 +28,53 @@ const HomeComponent = () => {
     const handleChange = (newValue) => {
         setOtp(newValue)
     }
-    const sentOtp = () => {
-        setLoaderTrue()
-        const formData = new FormData();
-        formData.append('phone_number', phoneNumber);
-        return axios.post('/api/auth/user/login', formData)
-            .then((response) => {
-                setIdentification_token(response.data.json.data.identification_token);
-                setsendOtpStatus(response.data.json.status)
-                setLoaderFalse()
-                return response.data;
-            })
-            .catch((error) => {
-                setLoaderFalse()
-                console.error('Error:', error);
-                throw error;
 
-            });
+    const sentOtp = (key) => {
+        if (key === 'Enter' && phoneNumber.length > 9) {
+            setLoaderTrue()
+            const formData = new FormData();
+            formData.append('phone_number', phoneNumber);
+            return axios.post('/api/auth/user/login', formData)
+                .then((response) => {
+                    if (response.data.json.status) {
+                        showSuccessToast(response.data.json.message)
+                        setIdentification_token(response.data.json.data.identification_token);
+                        setsendOtpStatus(response.data.json.status)
+                        setLoaderFalse()
+                        return response.data;
+                    }
+                })
+                .catch((error) => {
+                    showErrorToast(error.response.data.json.message)
+                    setLoaderFalse()
+                });
+        }
     };
 
-    const submitOtp = () => {
-        setLoaderTrue()
-        const formData = new FormData();
-        formData.append('identification_token', identification_token);
-        formData.append('otp', otp);
-        return axios.post('/api/auth/user/submit_otp', formData)
-            .then((response) => {
-                localStorage.setItem('user_details', JSON.stringify(response.data.data))
-                setUserDetails(response.data.data)
-                setIsLogin(response.data.data.status)
-                setLoader(response.data.data.status)
-                setLoaderFalse()
-                return response.data;
-
-            })
-            .catch((error) => {
-                setLoaderFalse()
-                console.error('Error:', error);
-                throw error;
-            });
+    const submitOtp = (key) => {
+        if (key === 'Enter' && otp.length > 3) {
+            setLoaderTrue()
+            const formData = new FormData();
+            formData.append('identification_token', identification_token);
+            formData.append('otp', otp);
+            return axios.post('/api/auth/user/submit_otp', formData)
+                .then((response) => {
+                    if (response.data.status) {
+                        showSuccessToast(response.data.message)
+                        localStorage.setItem('user_details', JSON.stringify(response.data.data))
+                        localStorage.setItem('auth_token', response.data.data.auth_token)
+                        setUserDetails(response.data.data)
+                        setIsLogin(response.data.status)
+                        setLoader(response.data.status)
+                        setLoaderFalse()
+                        return response.data;
+                    }
+                })
+                .catch((error) => {
+                    showErrorToast(error.response.data.json.message)
+                    setLoaderFalse()
+                });
+        }
     };
 
     const setLoaderTrue = () => {
@@ -96,12 +104,13 @@ const HomeComponent = () => {
                 </div>
                 <div className='input-container'>
                     {checkOtpStatus() ?
-                        <MuiOtpInput className='otp-input' value={otp} onChange={handleChange}/>
+                        <MuiOtpInput onKeyPress={(e) => submitOtp(e.key)} className='otp-input' value={otp} onChange={handleChange}/>
                         :
                         <input onChange={handlePhoneNumber}
                                required={true}
                                maxLength='10'
                                value={phoneNumber}
+                               onKeyPress={(e) => sentOtp(e.key)}
                                inputMode='numeric'
                                type="text"
                                className="transparent-input"
@@ -110,7 +119,7 @@ const HomeComponent = () => {
                     }
                 </div>
                 <div className="login-buttons">
-                    <button onClick={checkOtpStatus() ? submitOtp  : sentOtp} className='submit-button'> {checkOtpStatus() ? 'Continue' :  'GET OTP' }</button>
+                    <button onClick={() => checkOtpStatus() ? submitOtp('Enter')  : sentOtp('Enter')} className='submit-button'> {checkOtpStatus() ? 'Continue' :  'GET OTP' }</button>
                 </div>
                 <div>
 
