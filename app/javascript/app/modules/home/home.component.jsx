@@ -5,7 +5,7 @@ import { MuiOtpInput } from 'mui-one-time-password-input'
 import {isValuePresent} from "../../utils";
 import {ApiContext} from "../ApiContext";
 import BackDrop from "../back-drop/backDrop";
-import HomePageBg from '../../../../assets/images/HomePageDesign.svg';
+import HomePageBg from '../../../../../public/images/HomePageDesign.svg';
 
 const HomeComponent = () => {
     const {setIsLogin,setUserDetails} = useContext(ApiContext)
@@ -83,8 +83,8 @@ const HomeComponent = () => {
 
     return (
         <div className="home-page-container">
-            <BackDrop toggle={loader}/>
-            <HomePageBg className="home-page-des" />
+                <BackDrop toggle={loader}/>
+                <HomePageBg className="home-page-des" />
             <div className="login-component" >
                 <div className="login-heaging">
                     <h3 className='login-main-heading'>Welcome!</h3>
