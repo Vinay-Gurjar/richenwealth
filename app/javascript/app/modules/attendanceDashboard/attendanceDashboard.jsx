@@ -48,6 +48,29 @@ const AttendanceDashboard = ({}) => {
             });
     }
 
+
+    const whatsAppData = () => {
+        return axios.get('/api/user/whatsapp',{
+            params: {
+                cc_id: '',
+                shift_id: callCenterShift,
+                date: minimumCallsDate,
+            },
+            headers: {
+                'Authorization': `${JSON.parse(localStorage.getItem('user_details')).auth_token}`,
+            }
+        })
+            .then((response) => {
+                setHeaders(response.data.headers)
+                settableData(response.data.data)
+                return response.data;
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                throw error;
+            });
+    }
+
     useEffect(() => {
         if (isValuePresent(callCenterShift) && isValuePresent(minimumCallsDate)) {
             getDetails()
@@ -81,6 +104,7 @@ const AttendanceDashboard = ({}) => {
 
     return (
         <div className='dashboard-main-container'>
+            <span onClick={() => whatsAppData()}> whats app</span>
             <table className="table attendance-dashboard-table">
                 <thead style={{ overflowX: 'hidden' }}>
                 <tr>
