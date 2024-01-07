@@ -104,6 +104,7 @@ const HeaderBar = ({}) => {
     }
 
     const reportTiming = (callCenterShift) => {
+        let headers = config.headers
         return axios.get('/api/user/call_center/shift/timing',{
             params: {
                 shift_id: callCenterShift,
