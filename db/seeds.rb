@@ -7,9 +7,9 @@
 #   Character.create(name: "Luke", movie: movies.first)
 
 
-sa = User.where(name: "Super Admin 1", email: "super.admin@saral.tracker", password: "123456",
+sa = User.where(name: "Super Admin 1", email: "super.admin@daily.tracker", password: "123456",
                  phone_number: "9999223772").first_or_create!
-admin = User.where(name: "Admin 1", email: "admin@saral.tracker", password: "123456",
+admin = User.where(name: "Admin 1", email: "admin@daily.tracker", password: "123456",
                     phone_number: "9971223772").first_or_create!
 
 sa.add_role :super_admin
