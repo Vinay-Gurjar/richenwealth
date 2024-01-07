@@ -29,7 +29,7 @@ import { faUsers,
 const HeaderBar = ({}) => {
     const {userDetails,minimumCallsTime, setMinimumCallsTime,
         callCenterShift, timeList, setTimeList, setCallCenterShift,
-        setAttendanceYear, setAttendanceMonth, setAttendanceDays, setMinimumCallsDate, isLogin} = useContext(ApiContext)
+        setAttendanceYear, setAttendanceMonth, setAttendanceDays, setMinimumCallsDate, isLogin, config} = useContext(ApiContext)
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
     const [ccTiming, setCcTiming] = useState([]);
@@ -85,17 +85,16 @@ const HeaderBar = ({}) => {
     },[selectedMonth])
 
     const CallCenterShifts = () => {
+        let headers = config.headers
         return axios.get('/api/user/call_center/shift',{
             params: {
                 user_id: userDetails.id,
             },
-            headers: {
-                'Authorization': `${JSON.parse(localStorage.getItem('user_details')).auth_token}`,
-            }
+            headers
         })
             .then((response) => {
-                setCcTiming(response.data.data)
-                setCallCenterShift(response.data.data[0]?.id)
+                setCcTiming(response?.data?.data)
+                setCallCenterShift(response?.data?.data[0]?.id)
                 return response.data;
             })
             .catch((error) => {
@@ -109,13 +108,11 @@ const HeaderBar = ({}) => {
             params: {
                 shift_id: callCenterShift,
             },
-            headers: {
-                'Authorization': `${JSON.parse(localStorage.getItem('user_details')).auth_token}`,
-            }
+            headers
         })
             .then((response) => {
-                setTimeList(response.data.data)
-                return response.data;
+                setTimeList(response?.data?.data)
+                return response?.data;
             })
             .catch((error) => {
                 console.error('Error:', error);
