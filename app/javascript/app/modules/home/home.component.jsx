@@ -96,7 +96,7 @@ const HomeComponent = () => {
             <div className="login-component" >
                 <div className="login-heaging">
                     <h3 className='login-main-heading'>Welcome!</h3>
-                    <h4 className="login-sub-heading">To Daily Tracker</h4>
+                    <h4 className="login-sub-heading">To Jump Start </h4>
                 </div>
                 <div className="login-title">
                     <h5>{checkOtpStatus() || sendOtpStatus ? 'Verify' : 'Login'}</h5>
