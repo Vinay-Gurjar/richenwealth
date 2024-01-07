@@ -2,52 +2,33 @@ import React, {useState,useEffect} from "react";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {ApiContext} from "./modules/ApiContext";
-
 import './app.scss';
 import {Navigate} from "react-router";
 import HomeComponent from "./modules/home/home.component";
-import HeaderBar from "./modules/header/header";
-import Attendance from "./modules/attendace/attendance";
-import MinimumCallConnected from "./modules/minimumCallConnected/minimumCallConnected";
 import {isValuePresent} from "./utils";
 import BackDrop from "./modules/back-drop/backDrop";
-import FileUpload from "./modules/fileUpload/fileUpload";
-import TlWiseAgentReport from "./modules/tlWiseAgentReport/tlWiseAgentReport";
-import AgentWiseReport from "./modules/agentWiseReport/agentWiseReport";
-import AttendanceDashboard from "./modules/attendanceDashboard/attendanceDashboard";
-import Admin from "./modules/admin/admin";
+import AfterLogin from "./modules/afterLogin";
 
 const IndexRoutes = () => (
     <>
     <Routes>
-        <Route path="/attendance" element={<Attendance />} />
-        <Route path="/minimum_calls_connected" element={<MinimumCallConnected />} />
-        <Route path="/upload_files" element={<FileUpload />} />
-        <Route path="/hourly_report" element={<TlWiseAgentReport />} />
-        <Route path="/agent_wise_report" element={<AgentWiseReport />} />
-        <Route path="/attendance_dashboard" element={<AttendanceDashboard />} />
-        <Route path="/*" element={<Navigate to="/attendance" />} />
+        <Route path="/after_login" element={<AfterLogin />} />
+        <Route path="/*" element={<Navigate to="/after_login" />} />
     </Routes>
     </>
 );
 
 const AdminRoute = () => (
     <Routes>
-    <Route path="/sup_admin" element={<Admin />} />
+    {/*<Route path="/sup_admin" element={<Admin />} />*/}
     </Routes>
 );
 
 function App() {
     const [userDetails, setUserDetails] = useState()
     const [isLogin, setIsLogin] = useState(false)
-    const [attendanceYear,setAttendanceYear] = useState()
-    const [attendanceMonth,setAttendanceMonth] = useState()
-    const [attendanceDays,setAttendanceDays] = useState()
-    const [callCenterShift,setCallCenterShift] = useState()
-    const [timeList, setTimeList] = useState([])
     const [loader, setLoader] = useState(true)
-    const [minimumCallsTime, setMinimumCallsTime] = useState();
-    const [minimumCallsDate, setMinimumCallsDate] = useState();
+
 
     useEffect(() => {
         if (isValuePresent(localStorage.getItem('user_details'))) {
@@ -64,13 +45,6 @@ function App() {
             'Authorization': localStorage.getItem('auth_token'),
         }
     }
-
-
-
-    useEffect(() => {
-        // bubbleSort()
-    }, []);
-
 
 
     const componentPath = () => {
@@ -100,15 +74,10 @@ function App() {
     return (
         <>
             <ApiContext.Provider  value={{
-                isLogin,setIsLogin,callCenterShift, setCallCenterShift, setUserDetails,
-                userDetails, attendanceDays, setAttendanceMonth, attendanceMonth,
-                attendanceYear, setAttendanceYear, setAttendanceDays,
-                timeList ,setTimeList, minimumCallsTime, setMinimumCallsTime,
-                minimumCallsDate, setMinimumCallsDate, config}} >
+                isLogin,setIsLogin,setUserDetails,userDetails,config }} >
                 {loader &&
                     <BackDrop toggle={loader}/>
                 }
-                <HeaderBar />
                 {componentPath()}
             </ApiContext.Provider>
         </>

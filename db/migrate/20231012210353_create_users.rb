@@ -8,9 +8,6 @@ class CreateUsers < ActiveRecord::Migration[7.0]
       t.date :doj
       t.string :status
       t.date :is_inactive_date
-      t.references :shift_time, null: false, foreign_key: true
-      t.references :call_center, null: false, foreign_key: true
-
       t.timestamps
     end
   end

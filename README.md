@@ -20,3 +20,4 @@ bundle exec sidekiq
 ```
 
 Goto: [Sync Locatable](http://localhost:3000/saral-locatable/states)
+# vts-web-app
