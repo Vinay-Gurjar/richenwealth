@@ -7,13 +7,13 @@ import {Navigate} from "react-router";
 import HomeComponent from "./modules/home/home.component";
 import {isValuePresent} from "./utils";
 import BackDrop from "./modules/back-drop/backDrop";
-import AfterLogin from "./modules/afterLogin";
+import HomePage from "./modules/home/HomePage";``
 
 const IndexRoutes = () => (
     <>
     <Routes>
-        <Route path="/after_login" element={<AfterLogin />} />
-        <Route path="/*" element={<Navigate to="/after_login" />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/*" element={<Navigate to="/" />} />
     </Routes>
     </>
 );
@@ -48,26 +48,17 @@ function App() {
 
 
     const componentPath = () => {
-        if (isValuePresent(userDetails)) {
-            if (userDetails.roles.includes('super_admin')) {
-                return (
-                    <>
-                        <AdminRoute />
-                        <IndexRoutes />
-                    </>
-                );
-            } else {
-                return (
-                    <IndexRoutes />
-                );
-            }
-        }else {
+        if (userDetails?.roles?.includes('super_admin')) {
             return (
-            <Routes>
-                <Route path='/' element={<HomeComponent/>}/>
-                <Route path="/*" element={<Navigate to="/" />} />
-            </Routes>
-            )
+                <>
+                    <AdminRoute />
+                    <IndexRoutes />
+                </>
+            );
+        } else {
+            return (
+                <IndexRoutes />
+            );
         }
     };
 

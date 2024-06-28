@@ -85,3 +85,18 @@ export const showNotification = () => {
         theme: "light",
     });
 }
+
+export const getRandomNumber = (min, max) => {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+export const logo = () => {
+    const logos = [
+        '/images/BlueLogo.svg',
+        '/images/GreenLogo.svg',
+        '/images/SimplyLogo.svg'
+    ];
+    return logos[getRandomNumber(0, 2)];
+};
+
+export const companyName = 'Richen Wealth'

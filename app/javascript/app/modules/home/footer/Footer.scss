@@ -1,0 +1,91 @@
+
+
+
+
+.footer-container {
+  padding-bottom: 10px;
+  background-color: #4a4e4f;
+}
+
+.footer-top {
+  color:white;
+  margin-top: 3rem;
+  display: inline-flex;
+}
+
+.company-logo-footer {
+  width: 17rem;
+  height: 8rem;
+}
+
+.para {
+  margin-top: 2rem;
+  font-size: 1.2rem!important;
+}
+
+.foot-title {
+  font-size: 1.7rem;
+  font-weight: 500;
+  margin-bottom: 25px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.column-link {
+  font-size: 1.2rem!important;
+}
+
+.column-link:hover {
+  background: none;
+  color: #f44336!important;
+  cursor: pointer
+}
+
+.link-icon {
+  margin-right: 1rem;
+}
+
+.footer-middle {
+  color:white;
+  margin-top: 1rem;
+  padding-top: 1.3rem;
+  padding-bottom: 1.3rem;
+  border-top: 1px solid white;
+}
+
+.footer-middle-title {
+  font-size: 1.4rem;
+  font-weight: 500;
+}
+
+.footer-middle-para {
+  font-size: 1.2rem!important;
+}
+
+.footer-middle-images {
+  display: flex;
+  margin-left: auto;
+  margin-right: auto;
+  width: 29rem;
+  justify-content: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.amfi-logo {
+  width: 5rem;
+  height: 5rem;
+}
+
+.mutual-funds {
+  width: 14rem;
+  height: 5rem;
+}
+
+.footer-bottom {
+  color:white;
+}
+
+.hr {
+  color:white;
+}

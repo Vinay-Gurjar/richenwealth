@@ -1,0 +1,60 @@
+
+.info-container {
+  background: #f44336;
+  height: 2rem;
+  padding: 5px;
+}
+
+.contact-details {
+  font-size: 1rem;
+  color: #ffffff;
+  display: flex;
+  gap: 1rem
+}
+
+.social-media {
+  display: flex;
+  font-size: 1rem;
+  margin-left: auto;
+  gap: 1rem;
+}
+
+.logo-container {
+  margin-left: 3rem;
+  width: 8rem;
+  height: 8rem;
+}
+
+.company-logo {
+  width: 8rem;
+  height: 8rem;
+}
+
+.button-container {
+  margin: auto 0rem auto 5rem;
+  gap: 3rem;
+  font-size: 1.2rem;
+}
+
+.login-container {
+  width: 10rem;
+  height: 3rem;
+  background: red;
+  display: flex;
+  justify-content: center;
+  margin: auto;
+}
+
+.login-button {
+  color: white !important;
+}
+
+.navigation-button {
+  color: black !important;
+  font-size: 1.5rem;
+}
+
+.navigation-button:hover {
+  background: none;
+  color: #f44336!important;
+}
